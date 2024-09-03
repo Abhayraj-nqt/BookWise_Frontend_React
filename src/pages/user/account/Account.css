@@ -1,0 +1,12 @@
+.account__page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--secondary-color-light);
+}
+
+.account__user-details {
+    align-items: start;
+    padding: 1rem;
+}

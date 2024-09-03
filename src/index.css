@@ -1,13 +1,119 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Importing Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+/* Defining colors */
+:root {
+  
+  --color-primary:  #1F299C;
+  --color-primary-light:  #E1EAF9;
+  
+  --color-bg-white: #FFFFFF;
+  --color-bg-gray: #F1F2F4;
+  --color-bg-blue: #D4EDFF50;
+
+
+  /* Theme colors */
+  --primary-color: #FB3453;
+  --primary-color-light: #FFEBEE;
+  --secondary-color: #929394;
+  --secondary-color-light: #F1F3F6;
+
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-text-dark: #3C3335;
+
+  /* Alert colors */
+  --color-error: #E3322D;
+  --color-success: #399B35;
+  --color-warning: #F5AB23;
+  --color-info: #1288BF;
+
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
 }
+
+/* Typgraphy */
+body, p, h1, h2, h3, h4, h5, h6, div, input, button, select, label {
+  font-family: "Ubuntu", sans-serif;
+}
+
+/* colors */
+.text-primary {
+  color: var(--primary-color);
+}
+
+.text-secondary {
+  color: var(--secondary-color);
+}
+
+.text-white {
+  color: var(--color-white);
+}
+
+.text-black {
+  color: var(--color-black);
+}
+
+/* Headings */
+h1, h2, h3 {
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+}
+
+/* Body Text */
+body, p {
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+/* Captions & Small Text */
+.caption, .small-text {
+  font-weight: 300;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-text-dark);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.flex {
+  display: flex;
+}
+
+.icon {
+  cursor: pointer;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+

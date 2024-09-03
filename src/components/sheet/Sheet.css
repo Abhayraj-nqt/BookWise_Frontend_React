@@ -1,0 +1,56 @@
+.sheet-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  transform: translateX(100%);
+  z-index: 1000;
+  /* transition: transform 0.3s; */
+}
+
+.sheet-container.open {
+  transform: translateX(0);
+}
+
+.sheet-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.sheet-content {
+  position: relative;
+  background-color: #FFFF;
+  width: 100%;
+  max-width: 30rem;
+  height: 100%;
+  padding: 2rem;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  z-index: 1001;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1002;
+}
+
+.sheet-body {
+  width: 100%;
+  height: 100%;
+}
+

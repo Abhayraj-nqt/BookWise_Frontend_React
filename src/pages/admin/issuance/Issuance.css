@@ -1,0 +1,51 @@
+.issuance-page {
+    width: 100%;
+}
+
+.issuance-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.issuance-list {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.close-btn {
+    margin-top: 1rem;
+}
+
+.filter-section {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    color: var(--color-text-dark);
+}
+
+.filter-icon {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.out-of-stock {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.out-of-stock input {
+    width: 1rem;
+    margin: 0;
+}
+
+.filter-btns {
+    display: flex;
+    gap: 0.5rem;
+}

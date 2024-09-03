@@ -1,0 +1,24 @@
+.pagination {
+    display: flex;
+    color: var(--secondary-color);
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    height: 1.58rem;
+}
+
+.pagination-icon-left {
+    transition: all 0.3s;
+}
+
+.pagination-icon-right {
+    transition: all 0.3s;
+}
+
+.pagination-icon-left:hover {
+    color: var(--primary-color);
+}
+
+.pagination-icon-right:hover {
+    color: var(--primary-color);
+}

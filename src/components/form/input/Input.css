@@ -1,0 +1,52 @@
+.form-input-wraper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--color-text-dark);
+}
+
+textarea, input {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0.7rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  resize: none;
+
+  background-color: var(--secondary-color-light)
+}
+
+textarea {
+  resize: none;
+}
+
+.error-message {
+  color: var(--primary-color);
+  font-size: 0.75rem;
+
+}
+
+
+
+
+
+
+
+
+/* -------------------------------------------------------------------- */
+
+/* input:focus,
+textarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 5px rgba(44, 62, 80, 0.5);
+} */

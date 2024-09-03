@@ -1,0 +1,28 @@
+.filter-select-books {
+    position: relative;
+    width: 100%;
+}
+
+.book-list-dropdown {
+    position: absolute;
+    top: 5rem;
+    left: 0;
+    right: 0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: #FFF;
+    border: 1px solid var(--secondary-color-light);
+    z-index: 1000;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+
+.book-list-dropdown-item {
+    display: flex;
+    gap: 1rem;
+}
+
+.book-list-dropdown-item input {
+    width: 1rem;
+    cursor: pointer;
+}

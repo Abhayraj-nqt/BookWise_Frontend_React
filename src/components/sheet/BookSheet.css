@@ -1,0 +1,47 @@
+.book-sheet {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    top: 1rem;
+}
+
+.book-sheet h2 {
+    position: relative;
+    top: -1rem;
+}
+
+.sheet-serch-bar {
+    display: flex;
+    gap: 1rem;
+}
+
+.user-details-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    background-color: var(--secondary-color-light);
+    border-radius: 0.5rem;
+    gap: 1rem;
+}
+
+.user-details-container .user-label {
+    font-size: 1rem;
+    font-weight: 500;
+    min-width: 4.5rem;
+    margin-right: 1rem;
+}
+
+.uder-detail-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.book-sheet-issue-btn {
+    width: 100%;
+}
+
+.book-sheet-issue-btn button {
+    width: 100%;
+    margin-bottom: 1rem;
+}

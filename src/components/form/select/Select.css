@@ -1,0 +1,17 @@
+select {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0.7rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  resize: none;
+  background-color: var(--secondary-color-light)
+}
+
+
+.error-message {
+  color: var(--primary-color);
+  font-size: 0.75rem;
+
+}

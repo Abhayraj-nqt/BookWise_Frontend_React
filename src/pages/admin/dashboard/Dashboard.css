@@ -1,0 +1,57 @@
+.dashboard-page {
+
+}
+
+.lib-details {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.dash-statistic-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 8rem;
+    min-width: 16rem;
+    gap: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: none;
+}
+
+.dash-statistic-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1rem 0rem 1rem;
+}
+
+.dash-statistic-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 16rem;
+    color: var(--primary-color);
+    background-color: var(--primary-color-light);
+}
+
+.dash-statistic-card p {
+    font-weight: 600;
+    font-size: 1.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* margin-bottom: 0.5rem; */
+}
+
+.dash-statistic-text {
+    font-weight: 600;
+    font-size: 1.3rem;
+    padding: 1rem;
+    padding-top: 0;
+}

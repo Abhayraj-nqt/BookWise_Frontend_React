@@ -1,0 +1,39 @@
+/* Primary Button */
+.button-primary {
+  background-color: var(--primary-color);
+  color: var(--color-white);
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 400;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-primary:hover {
+  background-color: #ec2341;
+}
+
+/* Secondary Button */
+.button-secondary {
+  background-color: #ffffff;
+  color: var(--primary-color);
+  border: 0.125rem solid var(--primary-color);
+  /* padding: 0.625rem 1.25rem; */
+  padding: 0.535rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 400;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button-secondary:hover {
+  background-color: var(--color-white);
+}
+
+button {
+  /* margin: 0.5rem; */
+}
+

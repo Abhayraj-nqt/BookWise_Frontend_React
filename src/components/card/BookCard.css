@@ -1,0 +1,30 @@
+.book-card {
+    min-width: 12rem;
+}
+
+.book-details {
+   
+}
+
+.book-details p span {
+    font-weight: 300;
+}
+
+.book-actions {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+.book-edit-icon {
+    color: var(--color-alert-warning);
+}
+
+.book-delete-icon {
+    color: var(--color-alert-error);
+}
+
+.book-update-btn {
+    margin-top: 2rem;
+}

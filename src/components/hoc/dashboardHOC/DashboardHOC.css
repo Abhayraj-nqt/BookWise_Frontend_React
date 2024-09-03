@@ -1,0 +1,30 @@
+.dashboard-hoc {
+    display: flex;
+    gap: 1.5rem;
+    min-height: 100vh;
+    background-color: var(--secondary-color-light);
+}
+
+.dash-sidebar {
+    width: 10rem;
+}
+
+.dash-area {
+    padding-top: 5rem;
+    padding-left: 16.5rem;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
+    width: 100%;
+    position: relative;
+    overflow-x: hidden;
+}
+
+@media screen and (width <= 768px) {
+    .dashboard-hoc {
+        gap: 1rem;
+    }
+    .dash-area {
+        padding-left: 1rem;
+        padding-bottom: 3rem;
+    }
+}
