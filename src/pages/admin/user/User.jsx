@@ -100,7 +100,8 @@ const User = () => {
         toast.success(data?.message || `User deleted successfully`);
         setDeleteId(undefined);
       } catch (error) {
-        toast.error('Failed to delete user')
+        const msg = error.response.data.message || 'Failed to delete!';
+        toast.error(msg);
         setDeleteId(undefined);
       }
     } else {
@@ -163,7 +164,7 @@ const User = () => {
 
       <UserPopup title={'Add user'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewUser} category={userData} type='add'  />
 
-      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} />
+      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} message={`Are you really wanted to delete!\nIf you delete then the corresponding issuences will also be deleted.`} />
 
     </div>
   )

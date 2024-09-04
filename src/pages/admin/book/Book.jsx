@@ -109,7 +109,8 @@ const Book = () => {
         toast.success(data?.message || `Successfully deleted`);
         setDeleteId(undefined);
       } catch (error) {
-        toast.error('Failed to delete.');
+        const msg = error.response.data.message || 'Failed to delete!';
+        toast.error(msg);
         setDeleteId(undefined);
       }
     } else {
@@ -181,7 +182,7 @@ const Book = () => {
       </div>
 
       <BookPopup title={'Add book'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewBook} book={bookData} type='add' />
-      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} />
+      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} message={`Are you really wanted to delete!\nIf you delete then the corresponding issuences will also be deleted.`} />
     </div>
   )
 }

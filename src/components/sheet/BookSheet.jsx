@@ -108,12 +108,13 @@ const BookSheet = ({ isSheetOpen, onClose, bookData }) => {
         }
 
         try {
-            const {data} = await createIssuance(issenceObj, auth.token);
+            const data = await createIssuance(issenceObj);
             console.log('ISSUANCE', data);
-            toast.success('Issuance created successfully');
+            toast.success(data?.message || 'Issuance created successfully');
         } catch (error) {
+            const msg = error.response.data.message || 'Failed to create issuance';
             console.log(error);
-            toast.error('Failed to create issuance');
+            toast.error(msg);
         }
 
         onClose();

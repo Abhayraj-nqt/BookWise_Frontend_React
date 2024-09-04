@@ -109,7 +109,8 @@ const Category = () => {
         toast.success(data?.message || `Successfully deleted`);
         setDeleteId(undefined);
       } catch (error) {
-        toast.error('Failed to delete!');
+        const msg = error.response.data.message || 'Failed to delete!';
+        toast.error(msg);
         setDeleteId(undefined);
       }
     } else {
@@ -182,7 +183,7 @@ const Category = () => {
 
       <CategoryPopup title={'Add category'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewCategory} category={categoryData} type='add' errors={errors} />
 
-      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} />
+      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} message={`Are you sure you want to delete this item?\nIf you delete it then the corresponding books will also be deleted.`} />
 
     </div>
   )
