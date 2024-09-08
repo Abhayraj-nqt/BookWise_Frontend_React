@@ -7,12 +7,12 @@ import { GroupIcon, BooksIcon, CategoryIcon, IssuanceIcon } from '../../../compo
 
 // CSS
 import './Dashboard.css'
-import { useSelector } from 'react-redux';
+
+// Functions
 import { getStatistics } from '../../../api/services/dashboard';
+import toast from '../../../components/toast/toast';
 
-const Dashboard = () => {
-
-  const auth = useSelector(state => state.auth);
+const Dashboard = ({setLoading}) => {
 
   const [statistics, setStatistics] = useState({
     "totalBooks": '',
@@ -34,10 +34,13 @@ const Dashboard = () => {
 
   const loadStatistics = async () => {
     try {
+      setLoading(true)
       const data = await getStatistics();
       setStatistics(data);
     } catch (error) {
-      console.log(error);
+      toast.error('Failed to load data!');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -46,21 +49,21 @@ const Dashboard = () => {
     <div className='dashboard-page'>
       <div className="lib-details">
     
-        <StatisticCard heading={'Total Issuances'} data={statistics.totalIssuance} icon={<IssuanceIcon size={30} />} />
-        <StatisticCard heading={'Active issuances'} data={statistics.totalActiveInHouseIssuance+statistics.totalActiveTakeAwayIssuance} icon={<IssuanceIcon size={30} />} />
-        <StatisticCard heading={'In house issuances'} data={statistics.totalActiveInHouseIssuance} icon={<IssuanceIcon size={30} />} />
-        <StatisticCard heading={'Take away issuances'} data={statistics.totalActiveTakeAwayIssuance} icon={<IssuanceIcon size={30} />} />
+        <StatisticCard heading={'Total Issuances'} data={statistics.totalIssuance.toString()} icon={<IssuanceIcon size={30} />} />
+        <StatisticCard heading={'Active issuances'} data={(statistics.totalActiveInHouseIssuance+statistics.totalActiveTakeAwayIssuance).toString()} icon={<IssuanceIcon size={30} />} />
+        <StatisticCard heading={'In house issuances'} data={statistics.totalActiveInHouseIssuance.toString()} icon={<IssuanceIcon size={30} />} />
+        <StatisticCard heading={'Take away issuances'} data={statistics.totalActiveTakeAwayIssuance.toString()} icon={<IssuanceIcon size={30} />} />
 
-        <StatisticCard heading={'Categories'} data={statistics.totalCategories} icon={<CategoryIcon size={30} />} />
+        <StatisticCard heading={'Categories'} data={statistics.totalCategories.toString()} icon={<CategoryIcon size={30} />} />
 
-        <StatisticCard heading={'Book count'} data={statistics.totalBooks} icon={<BooksIcon size={30} />} />
-        <StatisticCard heading={'Avl. count'} data={statistics.avlBooks} icon={<BooksIcon size={30} />} />
-        <StatisticCard heading={'Book types'} data={statistics.totalBookTitles} icon={<BooksIcon size={30} />} />
-        <StatisticCard heading={'Avl. books'} data={statistics.totalAvlBookTitles} icon={<BooksIcon size={30} />} />
+        <StatisticCard heading={'Total books'} data={statistics.totalBooks.toString()} icon={<BooksIcon size={30} />} />
+        <StatisticCard heading={'Available books'} data={statistics.avlBooks.toString()} icon={<BooksIcon size={30} />} />
+        <StatisticCard heading={'Book types'} data={statistics.totalBookTitles.toString()} icon={<BooksIcon size={30} />} />
+        {/* <StatisticCard heading={'Avl. books'} data={statistics.totalAvlBookTitles} icon={<BooksIcon size={30} />} /> */}
 
-        <StatisticCard heading={'Registered users'} data={statistics.totalUsers} icon={<GroupIcon size={30} />} />
-        <StatisticCard heading={'Active users'} data={statistics.totalActiveUsers} icon={<GroupIcon size={30} />} />
-        <StatisticCard heading={'Users in library'} data={statistics.totalUsersInLibrary} icon={<GroupIcon size={30} />} />
+        <StatisticCard heading={'Registered users'} data={statistics.totalUsers.toString()} icon={<GroupIcon size={30} />} />
+        <StatisticCard heading={'Active users'} data={statistics.totalActiveUsers.toString()} icon={<GroupIcon size={30} />} />
+        <StatisticCard heading={'Users in library'} data={statistics.totalUsersInLibrary.toString()} icon={<GroupIcon size={30} />} />
 
       </div>
     </div>

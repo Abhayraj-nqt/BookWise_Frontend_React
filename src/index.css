@@ -5,9 +5,6 @@
 /* Defining colors */
 :root {
   
-  --color-primary:  #1F299C;
-  --color-primary-light:  #E1EAF9;
-  
   --color-bg-white: #FFFFFF;
   --color-bg-gray: #F1F2F4;
   --color-bg-blue: #D4EDFF50;
@@ -116,4 +113,9 @@ body, p {
   cursor: pointer;
 }
 
+.no-wrap {
+  text-wrap: nowrap;
+  word-wrap: none;
+  white-space: nowrap;
+}
 

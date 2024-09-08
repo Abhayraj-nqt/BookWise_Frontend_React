@@ -5,6 +5,7 @@
 .issuance-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 1rem;
 }
 
@@ -26,11 +27,12 @@
     color: var(--color-text-dark);
 }
 
-.filter-icon {
+.issuance-header .filter-icon {
     display: flex;
     cursor: pointer;
     align-items: center;
     gap: 0.3rem;
+    margin-bottom: 0;
 }
 
 .out-of-stock {

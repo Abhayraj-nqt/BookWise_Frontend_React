@@ -14,7 +14,6 @@ const AdminRoute = ({children, ...rest}) => {
           setVerified(true);
         }
       } catch (error) {
-        console.log('ADMIN ROUTE ERR', error);
         setVerified(false);
       }
     }

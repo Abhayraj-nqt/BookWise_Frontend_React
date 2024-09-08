@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'
+
+// Components
 import Popup from './Popup';
 import Button from '../button/Button';
 import Select from '../form/select/Select';
-import { validateNotEmpty } from '../../libs/utils';
 import TimePicker from '../form/time/TimePicker';
 import DatePicker from '../form/date/DatePicker';
+
+// Functions
+import { validateNotEmpty } from '../../libs/utils';
 
 
 const initalErrors = {
@@ -103,7 +107,6 @@ const IssuancePopup = ({title, isPopupOpen, closePopup, issuance, onEdit, onAdd,
     const handleAdd = () => {
         if (validateIssuance()) {
             onAdd(issuanceData);
-            // closePopup();
         }
     }
 
@@ -132,18 +135,9 @@ const IssuancePopup = ({title, isPopupOpen, closePopup, issuance, onEdit, onAdd,
 
     return (
         <Popup isOpen={isPopupOpen} title={title} onClose={closePopup} >
-            {/* <Input type={'text'} value={bookData.title} name={'title'} onChange={(e) => handleChange(e)} label={'Title'} placeholder={'Enter book title'} />
-            <Input type={'text'} value={bookData.author} name={'author'} onChange={(e) => handleChange(e)} label={'Author'} placeholder={'Enter author name'} />
-            <Input type={'number'} value={bookData.avlQty} name={'avlQty'} onChange={(e) => handleChange(e)} label={'Quantity'} placeholder={'Enter book quantity'} /> */}
             <Select label={'Status'} name={'status'} value={issuanceData.status} onChange={(e) => handleChange(e)} placeholder={'Select status'} error={errors.status} >
-                {/* <option value="">Select</option> */}
                 <option value="Issued">Issued</option>
                 <option value="Returned">Returned</option>
-            </Select>
-            <Select label={'Type'} name={'issuanceType'} value={issuanceData.issuanceType} onChange={(e) => handleChange(e)} placeholder={'Select issuance typr'} error={errors.issuanceType} >
-                {/* <option value="">Select</option> */}
-                <option value="In house">In house</option>
-                <option value="Take away">Take away</option>
             </Select>
             {issuanceData.issuanceType === 'In house' && <TimePicker label={'Return time'} name='returnTime' value={issuanceData.returnTime} onChange={handleChange} placeholder={'Select time'} className={''} min={currentTime} error={errors.returnTime} />}
             {issuanceData.issuanceType === 'Take away' && <DatePicker label={'Return date'} name='returnTime' value={issuanceData.returnTime} onChange={handleChange} placeholder={'Select date'} className={''} min={new Date().toISOString().split("T")[0]} error={errors.returnTime} />}

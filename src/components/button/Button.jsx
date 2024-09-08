@@ -1,7 +1,7 @@
 import React from "react";
 import "./Button.css";
 
-const Button = ({ children, varient = 'primary', className, type, onClick }) => {
+const Button = ({ children, varient = 'primary', className, type="button", onClick }) => {
   if (varient === "primary") {
     return <button type={type} onClick={onClick} className={`button-primary ${className}`}>{children}</button>;
   } else if (varient === "secondary") {

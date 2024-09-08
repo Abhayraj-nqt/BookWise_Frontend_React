@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from 'react'
-import Sheet from './Sheet'
-import { getAllBooks, getBookByTitle } from '../../api/services/book';
-import { useSelector } from 'react-redux';
-import Searchbar from '../searchbar/Searchbar';
-import Button from '../button/Button';
+import { useNavigate } from 'react-router-dom'
 
-import './UserSheet.css'
+// Components
+import Sheet from './Sheet'
 import toast from '../toast/toast';
 import Select from '../form/select/Select';
-import { createIssuance } from '../../api/services/Issuance';
 import TimePicker from '../form/time/TimePicker';
 import DatePicker from '../form/date/DatePicker';
 import SelectSearch from '../form/selectSearch/SelectSearch';
+import Button from '../button/Button';
+
+// CSS
+import './UserSheet.css'
+
+// Functions
+import { getAllBooks } from '../../api/services/book';
+import { createIssuance } from '../../api/services/Issuance';
 import { validateNotEmpty } from '../../libs/utils';
+
 
 const initialErrors = {
     returnTime: ''
 }
 
-const UserSheet = ({ isSheetOpen, onClose, userData }) => {
+const UserSheet = ({ isSheetOpen, onClose, userData, setLoading }) => {
 
-    const auth = useSelector(state => state.auth);
+    const navigate = useNavigate();
 
     const [bookData, setBookData] = useState({
         id: '',
@@ -37,8 +42,6 @@ const UserSheet = ({ isSheetOpen, onClose, userData }) => {
         new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
     );
 
-    const [query, setQuery] = useState('');
-    const [clearInput, setClearInput] = useState(false);
     const [issuanceType, setIssuanceType] = useState('In house');
     const [returnTime, setReturnTime] = useState('');
     const [errors, setErrors] = useState(initialErrors);
@@ -58,18 +61,14 @@ const UserSheet = ({ isSheetOpen, onClose, userData }) => {
                 },
                 avlQty: '',
             })
-            setQuery('');
-            setClearInput(true);
             setClearSheetInput(true);
             setErrors(initialErrors);
         } else {
-            setClearInput(false);
             setClearSheetInput(false);
         }
     }, [isSheetOpen])
 
     const handleSearch = async (searchQuery) => {
-        // setQuery(searchQuery);
         setSearch(searchQuery);
         await loadBooks();
     }
@@ -91,7 +90,6 @@ const UserSheet = ({ isSheetOpen, onClose, userData }) => {
             formatedDateTime = `${returnTime}T${currentTime}`;
         }
 
-        console.log({ "user mobile": userData?.id, "book id": bookData?.id, issuanceType });
         const issenceObj = {
             user: userData?.id,
             book: bookData?.id,
@@ -100,13 +98,15 @@ const UserSheet = ({ isSheetOpen, onClose, userData }) => {
         }
 
         try {
-            const {data} = await createIssuance(issenceObj, auth.token);
-            console.log('ISSUANCE', data);
+            setLoading(true);
+            const data = await createIssuance(issenceObj);
             toast.success(data?.message || 'Issuance created successfully');
+            navigate('/admin/issuance')
         } catch (error) {
             const msg = error.response.data.message || 'Failed to create issuance';
-            console.log(error);
             toast.error(msg);
+        } finally {
+            setLoading(false);
         }
 
         onClose();
@@ -139,7 +139,7 @@ const UserSheet = ({ isSheetOpen, onClose, userData }) => {
                 setBookList(data?.content);
             }
         } catch (error) {
-            console.log(error);
+            toast.error('Error fetching books')
         }
     }
 

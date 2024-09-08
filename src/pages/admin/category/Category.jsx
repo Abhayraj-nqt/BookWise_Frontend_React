@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 
 // CSS
 import './Category.css'
@@ -18,19 +17,16 @@ import toast from '../../../components/toast/toast'
 import { validateNotEmpty } from '../../../libs/utils'
 
 const categoryCols = [
-  "Id",
+  "S. no",
   "Name",
 ]
 
-const Category = () => {
-
-  const auth = useSelector(state => state.auth);
+const Category = ({setLoading, rowCount}) => {
 
   const [totalPages, setTotalPages] = useState(0);
-
   const [categories, setCategories] = useState([]);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(5);
+  const [size, setSize] = useState(rowCount || 5);
   const [sortBy, setSortBy] = useState('id');
   const [sortDir, setSortDir] = useState('desc');
   const [search, setSearch] = useState('')
@@ -54,8 +50,14 @@ const Category = () => {
   }, [page, size, sortBy, sortDir])
 
   useEffect(() => {
+    setSize(rowCount);
+  }, [rowCount])
+
+  useEffect(() => {
     const timeout = setTimeout(() => {
-      loadCategories();
+      if (search?.length === 0 || search?.length >= 3) {
+        loadCategories();
+      }
     }, 1000)
 
     return () => clearTimeout(timeout);
@@ -63,16 +65,18 @@ const Category = () => {
 
   const loadCategories = async () => {
     try {
+      setLoading(true)
       const data = await getAllCategories({page, size, sortBy, sortDir, search});
-
       if (Array.isArray(data)) {
         setCategories(data);
       } else {
-        setCategories(data.content); 
-        setTotalPages(data.totalPages);
+        setCategories(data?.content); 
+        setTotalPages(data?.totalPages);
       }
     } catch (error) {
-      console.error('Error fetching categories', error);
+      toast.error('Error fetching categories');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -85,13 +89,17 @@ const Category = () => {
   const handleEdit = async (categoryObj) => {
 
     try {
-      const data = await updateCategory(categoryObj.id, { "name": categoryObj?.name });
+      setLoading(true);
+      const data = await updateCategory(categoryObj?.id, { "name": categoryObj?.name });
       await loadCategories();
       closePopup();
       toast.success(data?.message || `Successfully updated`);
     } catch (error) {
-      closePopup();
-      toast.error(`Failed to update`);
+      // closePopup();
+      const msg = error?.response?.data?.message || 'Failed to update';
+      toast.error(msg);
+    } finally {
+      setLoading(false);
     }
 
   }
@@ -104,14 +112,17 @@ const Category = () => {
   const handleConfirmDelete = async (confirm) => {
     if (confirm && deleteId) {
       try {
+        setLoading(true);
         const data = await removeCategory(deleteId);
         await loadCategories();
         toast.success(data?.message || `Successfully deleted`);
         setDeleteId(undefined);
       } catch (error) {
-        const msg = error.response.data.message || 'Failed to delete!';
+        const msg = error?.response?.data?.message || 'Failed to delete!';
         toast.error(msg);
         setDeleteId(undefined);
+      } finally {
+        setLoading(false);
       }
     } else {
       setDeleteId(undefined);
@@ -119,8 +130,6 @@ const Category = () => {
   }
 
   const handleAddNewCategory = async (categoryObj) => {
-
-    // validate
     let isValid = true;
     const newError = { name: '' };
 
@@ -136,6 +145,7 @@ const Category = () => {
 
 
     try {
+      setLoading(true);
       const data = await createCategory({ "name": categoryObj?.name });
       setCategoryData({
         id: '',
@@ -145,8 +155,11 @@ const Category = () => {
       await loadCategories();
       toast.success(data?.message || `Category created successfully`);
     } catch (error) {
-      closePopup();
-      toast.error(`Failed to create category`);
+      // closePopup();
+      const msg = error?.response?.data?.message || 'Failed to add category';
+      toast.error(msg);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -170,22 +183,24 @@ const Category = () => {
   };
 
   return (
-    <div className='category-page'>
-      <div className="category-header">
-        <Searchbar placeholder={'Search category'} onSearch={handleSearch} />
-        <Button onClick={openPopup} varient={'primary'} >Add</Button>
+    <>
+      <div className='category-page'>
+        <div className="category-header">
+          <Searchbar placeholder={'Search category'} onSearch={handleSearch} />
+          <Button onClick={openPopup} varient={'primary'} >Add</Button>
+        </div>
+        <br />
+
+        <div className="">
+          <Table colums={categoryCols} data={categories} currentPage={page} size={size} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} addEdit={true} addDelete={true} onEdit={handleEdit} onDelete={handleDelete} type={'category'} />
+        </div>
+
+        <CategoryPopup title={'Add category'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewCategory} category={categoryData} type='add' errors={errors} />
+
+        <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} message={`Are you sure you want to delete this item?\nIf you delete it then the corresponding books will also be deleted.`} />
+
       </div>
-      <br />
-
-      <div className="">
-        <Table colums={categoryCols} data={categories} currentPage={page} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} addEdit={true} addDelete={true} onEdit={handleEdit} onDelete={handleDelete} type={'category'} />
-      </div>
-
-      <CategoryPopup title={'Add category'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewCategory} category={categoryData} type='add' errors={errors} />
-
-      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} message={`Are you sure you want to delete this item?\nIf you delete it then the corresponding books will also be deleted.`} />
-
-    </div>
+    </>
   )
 }
 

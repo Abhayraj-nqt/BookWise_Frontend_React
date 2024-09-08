@@ -14,7 +14,6 @@ const UserRoute = ({children, ...rest}) => {
           setVerified(true);
         }
       } catch (error) {
-        console.log('USER ROUTE ERR', error);
         setVerified(false);
       }
     }

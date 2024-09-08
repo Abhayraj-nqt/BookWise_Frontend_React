@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react'
+
+// Components
 import Popup from './Popup';
 import Input from '../form/input/Input';
 import Button from '../button/Button';
+
+// Functions
 import { validateEmail, validateMobile, validateNotEmpty, validatePassword } from '../../libs/utils';
 
 const initialErrors = {
@@ -49,8 +53,6 @@ const UserPopup = ({ title, isPopupOpen, closePopup, user, onEdit, onAdd, type =
     }, [isPopupOpen])
 
     const handleChange = (e) => {
-
-        // setErrors(initialErrors);
         setErrors({ ...errors, [e.target.name]: ''});
         setUserData({ ...userData, [e.target.name]: e.target.value });
     }
@@ -107,7 +109,7 @@ const UserPopup = ({ title, isPopupOpen, closePopup, user, onEdit, onAdd, type =
 
     const handleEdit = () => {
         if(validateUser()) {
-            onEdit(userData)
+            onEdit(userData, user?.mobileNumber)
             closePopup();
         }
     }

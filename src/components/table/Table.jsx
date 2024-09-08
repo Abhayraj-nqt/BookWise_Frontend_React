@@ -1,23 +1,21 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 // CSS
 import './Table.css'
 
 // Components
-import { DeleteIcon, EditIcon } from '../icons/Icons'
+import { DeleteIcon, EditIcon, SortingIcon } from '../icons/Icons'
 import CategoryPopup from '../popup/CategoryPopup'
 import BookPopup from '../popup/BookPopup'
 import Pagination from '../pagination/Pagination'
-
-import { SortingIcon } from '../icons/Icons'
 import UserPopup from '../popup/UserPopup'
 import Button from '../button/Button'
 import BookSheet from '../sheet/BookSheet'
 import UserSheet from '../sheet/UserSheet'
 import IssuancePopup from '../popup/IssuancePopup'
-import { useNavigate } from 'react-router-dom'
 
-const Table = ({ colums=[], data=[], currentPage=0, totalPages=1, onPageChange='', sortBy='id', sortDir='asc', onSort='', addEdit=false, addDelete=false, onEdit, onDelete, iconSize = 25, type}) => {
+const Table = ({ colums=[], data=[], currentPage=0, size=5, totalPages=1, onPageChange='', sortBy='id', sortDir='asc', onSort='', addEdit=false, addDelete=false, onEdit, onDelete, iconSize = 25, type, setLoading, renderList}) => {
 
     const navigate = useNavigate();
 
@@ -30,7 +28,6 @@ const Table = ({ colums=[], data=[], currentPage=0, totalPages=1, onPageChange='
     const [isDesc, setIsDesc] = useState(false);
 
     const handleSheet = (row) => {
-        // setIsSheetOpen(prev => !prev);
         toggleSheet();
         setSheetData(row);
     }
@@ -46,7 +43,6 @@ const Table = ({ colums=[], data=[], currentPage=0, totalPages=1, onPageChange='
         onSort(col, isDesc);
     }
 
-    // const openPopup = () => setIsPopupOpen(true);
     const openPopup = (row) => {
         setPopupData(row);
         setIsPopupOpen(true);
@@ -85,9 +81,9 @@ const Table = ({ colums=[], data=[], currentPage=0, totalPages=1, onPageChange='
 
     const getSheet = () => {
         if (type === 'book') {
-            return <BookSheet isSheetOpen={isSheetOpen} onClose={toggleSheet} bookData={sheetData} />
+            return <BookSheet isSheetOpen={isSheetOpen} onClose={toggleSheet} bookData={sheetData} setLoading={setLoading} renderList={renderList} />
         } else if (type === 'user') {
-            return <UserSheet isSheetOpen={isSheetOpen} onClose={toggleSheet} userData={sheetData} />
+            return <UserSheet isSheetOpen={isSheetOpen} onClose={toggleSheet} userData={sheetData} setLoading={setLoading} />
         }
     }
 
@@ -101,7 +97,7 @@ const Table = ({ colums=[], data=[], currentPage=0, totalPages=1, onPageChange='
                             {colums.map((col, i) => (
                                 <th key={`${col}-${i}`}  >
                                     <span>{col}</span>
-                                    {onSort && <span onClick={() => handleSort(col)} className='table-sort-btn pointer'><SortingIcon size={15} /></span>}
+                                    {i !== 0 && onSort && <span onClick={() => handleSort(col)} className='table-sort-btn pointer'><SortingIcon size={15} /></span>}
                                 </th>
                             ))}
                             {(addEdit || addDelete) && <th>Actions</th>}
@@ -113,9 +109,26 @@ const Table = ({ colums=[], data=[], currentPage=0, totalPages=1, onPageChange='
                             <tr key={`${i}-${row?.id}`} >
 
                                 {Object.entries(row).map(([key, value]) => {
-                                    if (key === 'image' || key === 'role' || Boolean(key) === false) {
+                                    if (key === 'id') {
+                                        
+                                        return <td key={key}>{currentPage * size + i + 1}</td>
+                                    } else if (key === 'image' || key === 'role' || Boolean(key) === false) {
                                         return null; 
                                     } else {
+
+                                        if (key === 'actualReturnTime' && !value) {
+                                            return  <td key={key}>
+                                                        <div className='not-returned'>Not returned</div>
+                                                    </td>
+                                        } else if (key === 'status') {
+                                            return  <td key={key}>
+                                                        <div className={`${value?.toLowerCase()}`}>{value}</div>
+                                                    </td>
+                                        } else if (key === 'type') {
+                                            return  <td className='no-wrap' key={key}>
+                                                        <div className={`no-wrap`}>{value}</div>
+                                                    </td>
+                                        }
                                        
                                         return (
                                             (type === 'issuance' || type === 'userHistory')
@@ -124,14 +137,16 @@ const Table = ({ colums=[], data=[], currentPage=0, totalPages=1, onPageChange='
                                                         ? value?.name || value?.title 
                                                         : (key === 'issueTime' || key === 'expectedReturnTime' || key === 'actualReturnTime') ? (
                                                             value ? <div className="">
-                                                                        <div className="">{new Date(value).toLocaleDateString('en-GB')}</div>
-                                                                        <div className="">{new Date(value).toLocaleTimeString()}</div>
+                                                                        <div className="no-wrap">{new Date(value).toLocaleDateString('en-GB')}</div>
+                                                                        <div className="no-wrap">{new Date(value).toLocaleTimeString()}</div>
                                                                     </div> : <div className="">Not avl.</div>
                                                         ) : 
-                                                        
-                                                        // key === 'status' ? value.charAt(0).toUpperCase() + value.slice(1) :
-                                                        
+                                                                                                            
                                                         value ? value : 'Not avl.'}
+                                                </td>
+
+                                                :(type === 'book' && key === 'avlQty') ? <td key={key}>
+                                                    {value}
                                                 </td>
                                                
                                                 : value && <td key={key}>
@@ -141,22 +156,20 @@ const Table = ({ colums=[], data=[], currentPage=0, totalPages=1, onPageChange='
                                     }
 
                                 })}
-                                {/* (type === 'book' && key === 'title') ?  <Link to={`/admin/book-history/${row?.id}`}>{value}</Link> : (type === 'user' && key === 'name') ?  <Link to={`/admin/user-history/${row?.mobileNumber}`}>{value}</Link> :  */}
+                        
 
                                 {(addEdit || addDelete) && <td className='table-action-btns'>
-                                    {addEdit && <span onClick={() => handleEdit(row)} className='table-edit-icon icon'><EditIcon size={iconSize} /></span>}
-                                    {type != 'user' && addDelete && <span onClick={() => onDelete(row?.id)} className='table-delete-icon icon'><DeleteIcon size={iconSize} /></span>}
+                                    {addEdit && <span data-testid={`edit-icon-${row?.id}`} onClick={() => handleEdit(row)} className='table-edit-icon icon'><EditIcon size={iconSize} /></span>}
+                                    {type != 'user' && addDelete && <span data-testid={`delete-icon-${row?.id}`} onClick={() => onDelete(row?.id)} className='table-delete-icon icon'><DeleteIcon size={iconSize} /></span>}
                                     {type == 'user' && addDelete && <span onClick={() => onDelete(row?.mobileNumber)} className='table-delete-icon icon'><DeleteIcon size={iconSize} /></span>}
                                 </td>}
 
                                 {(type === 'user' || type === 'book') && 
                                     <td className=''>
                                         <span className="assign-btn">
-                                            {/* <IssuanceIcon size={25} /> */}
                                             <Button onClick={() => handleSheet(row)} type={'button'} varient={'primary'}>Issue</Button>
                                         </span>
                                         <span className="view-btn">
-                                            {/* <FiEye size={25} /> */}
                                             {type === 'book' && <Button onClick={() => navigate(`/admin/book-history/${row?.id}`)} type={'button'} varient={'secondary'}>View</Button>}
                                             {type === 'user' && <Button onClick={() => navigate(`/admin/user-history/${row?.mobileNumber}`)} type={'button'} varient={'secondary'}>View</Button>}
                                         </span>

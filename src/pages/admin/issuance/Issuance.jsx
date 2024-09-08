@@ -1,32 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import './Issuance.css'
-import DashboardHOC from '../../../components/hoc/dashboardHOC/DashboardHOC'
-import { FilterIcon } from '../../../components/icons/Icons'
-import Table from '../../../components/table/Table'
-import { useSelector } from 'react-redux'
-import { deleteIssuance, getAllIssuances, updateIssuance } from '../../../api/services/Issuance'
-import toast from '../../../components/toast/toast'
-import IssuanceFilterPopup from '../../../components/popup/IssuanceFilterPopup'
 
+// Components
+import DashboardHOC from '../../../components/hoc/dashboardHOC/DashboardHOC'
+import Table from '../../../components/table/Table'
+import IssuanceFilterPopup from '../../../components/popup/IssuanceFilterPopup'
+import Searchbar from '../../../components/searchbar/Searchbar'
+import toast from '../../../components/toast/toast'
+import { FilterIcon } from '../../../components/icons/Icons'
+
+// Functions
+import { deleteIssuance, getAllIssuances, updateIssuance } from '../../../api/services/Issuance'
+
+// CSS
+import './Issuance.css'
+
+// Constants
 const issuanceCols = ['Id', 'User', 'Book', 'Issue', 'Return', 'Actual return', 'Status', 'Type'];
 
-const Issuance = () => {
-
-  const auth = useSelector(state => state.auth);
-
-  const [issuanceData, setIssuanceData] = useState({
-    id: '',
-    user: '',
-    book: '',
-    issueTime: '',
-    returnTime: '',
-    status: '',
-    issuanceType: '',
-  });
+const Issuance = ({setLoading, rowCount}) => {
 
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(5);
+  const [size, setSize] = useState(rowCount || 5);
   const [sortBy, setSortBy] = useState('id');
   const [sortDir, setSortDir] = useState('desc');
   const [search, setSearch] = useState('')
@@ -40,11 +35,7 @@ const Issuance = () => {
 })
 
   const [issuances, setIssuances] = useState([]);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  const openPopup = () => setIsPopupOpen(true);
-  const closePopup = () => setIsPopupOpen(false);
 
   const openFilter = () => setIsFilterOpen(true);
   const closeFilter = () => setIsFilterOpen(false);
@@ -54,13 +45,16 @@ const Issuance = () => {
   }, [filterParams])
 
   useEffect(() => {
-    // loadIssuances();
+    setSize(rowCount);
+  }, [rowCount])
+
+  useEffect(() => {
     setFilterParams({...filterParams, page, size, sortBy, sortDir})
   }, [page, size, sortBy, sortDir]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      loadIssuances();
+      resetFilter();
     }, 1000)
 
     return () => clearTimeout(timeout);
@@ -69,16 +63,18 @@ const Issuance = () => {
 
   const loadIssuances = async () => {
     try {
+      setLoading(true);
       const data = await getAllIssuances(filterParams);
-
       if (Array.isArray(data)) {
         setIssuances(data);
       } else {
-        setIssuances(data.content);
-        setTotalPages(data.totalPages);
+        setIssuances(data?.content);
+        setTotalPages(data?.totalPages);
       }
     } catch (error) {
-      console.log('Error fetching issuances', error);
+      toast.error('Error fetching issuances');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -87,48 +83,49 @@ const Issuance = () => {
     const issuenceObject = {
       user: issuanceObj?.user?.id,
       book: issuanceObj?.book?.id,
-      // issueTime: issuanceObj?.issueTime,
       returnTime: issuanceObj?.returnTime,
       status: issuanceObj?.status,
       issuanceType: issuanceObj?.issuanceType,
     }
 
     try {
-      const data = await updateIssuance(id, issuenceObject, auth.token);
+      setLoading(true);
+      const data = await updateIssuance(id, issuenceObject);
       toast.success(data?.message || `Successfully updated`);
       await loadIssuances();
     } catch (error) {
-      console.log(error);
-      toast.error(`Failed to update`)
+      toast.error(`Failed to update issuance`)
+    } finally {
+      setLoading(false);
     }
   }
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you really want to delete?')) {
-      console.log('DELETE', id);
-
       try {
-        const data = await deleteIssuance(id, auth.token);
+        setLoading(true);
+        const data = await deleteIssuance(id);
         toast.success(data?.message || `Successfully deleted`)
         await loadIssuances();
       } catch (error) {
-        console.log(`Failed to delete`);
+        toast.error(`Failed to delete issuance`);
+      } finally {
+        setLoading(false);
       }
 
     }
   }
 
-  const handleAddNewIssuance = async (issuanceObj) => {
-    console.log('ADD', issuanceObj);
-
-    // TODO - Make an api call to 
-  }
-
   const handleSort = (col, isDesc) => {
     const colMapping = {
       'Id': 'id',
-      'User': 'user',
-      'Book': 'book'
+      'User': 'user.name',
+      'Book': 'book.title',
+      'Issue': 'issueTime',
+      'Return': 'expectedReturnTime',
+      'Actual return': 'actualReturnTime',
+      'Status': 'status',
+      'Type': 'issuanceType'
     }
 
     setSortBy(colMapping[col]);
@@ -145,7 +142,6 @@ const Issuance = () => {
   };
 
   const handleFilter = (filterObj) => {
-    console.log(filterObj);
 
     filterObj.page = page;
     filterObj.size = size;
@@ -157,28 +153,30 @@ const Issuance = () => {
     closeFilter();
   }
 
+  const resetFilter = () => {
+    setFilterParams({
+      page, size, sortBy, sortDir, search,
+    })
+  }
+
 
   return (
     <div className='issuance-page'>
       <div className="issuance-header">
-        <div className="filter-section">
-          {/* <Searchbar placeholder={'Search issuance'} onSearch={handleSearch} /> */}
-          <div onClick={openFilter} className="filter-icon">
-            <span>Filter</span>
-            <FilterIcon size={20} />
-          </div>
+        <Searchbar placeholder={'Search issuances by user or book'} onSearch={handleSearch} />
+        <div onClick={openFilter} className="filter-icon">
+          <span>Filter</span>
+          <FilterIcon size={20} />
         </div>
-
-        {/* <Button onClick={openPopup} varient={'primary'} >Add</Button> */}
       </div>
-
+      <br />
+      
       <div className="">
         <Table colums={issuanceCols} data={issuances} currentPage={page} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} addDelete={false} addEdit={true} onEdit={handleEdit} onDelete={handleDelete} type={'issuance'} />
       </div>
 
 
       <IssuanceFilterPopup isOpen={isFilterOpen} onClose={closeFilter} title={'Filter issuance'} onFilter={handleFilter} />
-      {/* <IssuancePopup title={'Add issuance'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewIssuance} book={issuanceData} type='add' /> */}
 
     </div>
   )

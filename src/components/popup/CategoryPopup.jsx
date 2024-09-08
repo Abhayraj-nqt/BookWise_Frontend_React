@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react'
+
+// Components
 import Popup from './Popup'
 import Input from '../form/input/Input'
 import Button from '../button/Button'
+
+// Functions
 import { validateAlphabet, validateMinLength, validateNotEmpty } from '../../libs/utils'
 
 const initialError = {
@@ -86,7 +90,7 @@ const CategoryPopup = ({title, isPopupOpen, closePopup, category, onEdit, onAdd,
                 {
                     type === 'edit' ?
                     <Button onClick={() => handleEdit()} varient={'primary'} >Update</Button> :
-                    <Button onClick={() => handleAdd()} varient={'primary'} >Add</Button>
+                    <Button onClick={() => handleAdd()} varient={'primary'} >Save</Button>
                 }
             </div>
         </Popup>

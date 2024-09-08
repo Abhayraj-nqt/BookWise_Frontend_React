@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import './AdminUserHistory.css'
-import DashboardHOC from '../../../components/hoc/dashboardHOC/DashboardHOC'
 import { useParams } from 'react-router-dom'
 
-import { getUserByMobile, getUserHistory } from '../../../api/services/user'
-import { useSelector } from 'react-redux'
-import toast from '../../../components/toast/toast'
+// CSS
+import './AdminUserHistory.css'
+
+// Components
+import DashboardHOC from '../../../components/hoc/dashboardHOC/DashboardHOC'
 import Table from '../../../components/table/Table'
 import IssuanceFilterPopup from '../../../components/popup/IssuanceFilterPopup'
+import toast from '../../../components/toast/toast'
 import { FilterIcon } from '../../../components/icons/Icons'
+
+// Functions
+import { getUserByMobile, getUserHistory } from '../../../api/services/user'
 
 const tableCols = [
     "Id",
@@ -20,11 +24,10 @@ const tableCols = [
     "Type"
 ]
 
-const AdminUserHistory = () => {
+const AdminUserHistory = ({setLoading, rowCount}) => {
 
     const { mobile } = useParams();
 
-    const auth = useSelector(state => state.auth);
     const [user, setUser] = useState();
     const [firstName, setFirstName] = useState('');
     const [userHistory, setUserHistory] = useState([]);
@@ -32,7 +35,7 @@ const AdminUserHistory = () => {
 
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(0);
-    const [size, setSize] = useState(5);
+    const [size, setSize] = useState(rowCount || 5);
     const [sortBy, setSortBy] = useState('id');
     const [sortDir, setSortDir] = useState('asc');
     // const [search, setSearch] = useState('')
@@ -51,18 +54,24 @@ const AdminUserHistory = () => {
         setFilterParams({...filterParams, page, size, sortBy, sortDir});
     }, [page, size, sortBy, sortDir]);
 
+    useEffect(() => {
+        setSize(rowCount);
+    }, [rowCount])
+
     const openFilter = () => setIsFilterOpen(true);
     const closeFilter = () => setIsFilterOpen(false);
 
     const loadUserHistory = async () => {
         try {
+            setLoading(true);
             await loadUser();
             const data = await getUserHistory(mobile, filterParams)
-            setUserHistory(data.content);
-            setTotalPages(data.totalPages);
+            setUserHistory(data?.content);
+            setTotalPages(data?.totalPages);
         } catch (error) {
-            console.log(error);
-            toast.error("Failed to load user history");
+            toast.error("Error fetching user history");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -73,8 +82,7 @@ const AdminUserHistory = () => {
             const firstNameOfUser = data?.name.split(' ')[0];
             setFirstName(firstNameOfUser);
         } catch (error) {
-            console.log(error);
-            toast.error(`Failed to find user`);
+            toast.error(`User not found`);
         }
     }
 
