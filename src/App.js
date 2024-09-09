@@ -26,6 +26,7 @@ import Login from './pages/login/Login'
 // Functions ------------------------------------------------------------------ 
 import { getCurrentUser } from './api/services/auth'
 import { loginUser } from './redux/auth/authActions'
+import Notfound from './pages/notfound/Notfound'
 
 
 const App = () => {
@@ -86,6 +87,8 @@ const App = () => {
 
         {/* Protected routes for user */}
         <Route path='/user/history' element={<UserRoute> <History /> </UserRoute>} />
+
+        <Route path='*' element={<Notfound />} />
 
       </Routes>
     </>

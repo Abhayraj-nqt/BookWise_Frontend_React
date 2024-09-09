@@ -1,0 +1,24 @@
+.not-found-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--secondary-color-light);
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: column;
+}
+
+.not-found-page p {
+    font-size: 2rem;
+}
+
+.not-found-page a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-size: 1.25rem;
+    transition: all 0.3s;
+}
+
+.not-found-page a:hover {
+    color: black;
+}
