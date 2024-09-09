@@ -58,6 +58,12 @@ const UserPopup = ({ title, isPopupOpen, closePopup, user, onEdit, onAdd, type =
     }
 
     const validateUser = () => {
+
+        userData.name = userData?.name?.trim();
+        userData.email = userData?.email?.trim();
+        userData.mobileNumber = userData?.mobileNumber?.trim();
+        userData.password = userData?.password?.trim();
+
         let isValid = true;
         const newErrors = {
             name: '',

@@ -14,7 +14,6 @@ import AlertPopup from '../../../components/popup/AlertPopup'
 // Functions
 import { removeCategory, createCategory, updateCategory, getAllCategories } from '../../../api/services/category'
 import toast from '../../../components/toast/toast'
-import { validateNotEmpty } from '../../../libs/utils'
 
 const categoryCols = [
   "S. no",
@@ -39,11 +38,6 @@ const Category = ({setLoading, rowCount}) => {
     id: '',
     name: '',
   })
-
-  const [errors, setErrors] = useState({
-    username: '',
-    password: ''
-  });
 
   useEffect(() => {
     loadCategories();
@@ -130,20 +124,7 @@ const Category = ({setLoading, rowCount}) => {
   }
 
   const handleAddNewCategory = async (categoryObj) => {
-    let isValid = true;
-    const newError = { name: '' };
-
-    if (!validateNotEmpty(categoryObj?.name)) {
-      newError.name = `Category name can't be empty`
-      isValid(false);
-    }
-
-    if (!isValid) {
-      setErrors(newError);
-      return;
-    }
-
-
+  
     try {
       setLoading(true);
       const data = await createCategory({ "name": categoryObj?.name });
@@ -195,7 +176,7 @@ const Category = ({setLoading, rowCount}) => {
           <Table colums={categoryCols} data={categories} currentPage={page} size={size} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} addEdit={true} addDelete={true} onEdit={handleEdit} onDelete={handleDelete} type={'category'} />
         </div>
 
-        <CategoryPopup title={'Add category'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewCategory} category={categoryData} type='add' errors={errors} />
+        <CategoryPopup title={'Add category'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewCategory} category={categoryData} type='add' />
 
         <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} message={`Are you sure you want to delete this item?\nIf you delete it then the corresponding books will also be deleted.`} />
 

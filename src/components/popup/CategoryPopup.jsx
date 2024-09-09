@@ -45,6 +45,9 @@ const CategoryPopup = ({title, isPopupOpen, closePopup, category, onEdit, onAdd,
     }
 
     const validateCategory = () => {
+
+        categoryData.name = categoryData?.name?.trim();
+
         let isValid = true;
         const newErrors = { name: '' }
 

@@ -77,6 +77,10 @@ const BookPopup = ({title, isPopupOpen, closePopup, book, onEdit, onAdd, type='a
     }
 
     const validateBook = () => {
+
+        bookData.author = bookData?.author?.trim();
+        bookData.title = bookData?.title?.trim();
+
         let isValid = true;
         const newErrors = {
             title: '',
@@ -137,7 +141,7 @@ const BookPopup = ({title, isPopupOpen, closePopup, book, onEdit, onAdd, type='a
 
     const handleEdit = () => {
         if (validateBook()) {
-            onEdit(bookData); 
+            onEdit(bookData);
             closePopup();
         }
         

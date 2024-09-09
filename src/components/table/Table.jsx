@@ -97,7 +97,7 @@ const Table = ({ colums=[], data=[], currentPage=0, size=5, totalPages=1, onPage
                             {colums.map((col, i) => (
                                 <th key={`${col}-${i}`}  >
                                     <span>{col}</span>
-                                    {i !== 0 && onSort && <span onClick={() => handleSort(col)} className='table-sort-btn pointer'><SortingIcon size={15} /></span>}
+                                    {i !== 0 && onSort && <span data-testid={`sort-${col}`} onClick={() => handleSort(col)} className='table-sort-btn pointer'><SortingIcon size={15} /></span>}
                                 </th>
                             ))}
                             {(addEdit || addDelete) && <th>Actions</th>}
@@ -181,9 +181,9 @@ const Table = ({ colums=[], data=[], currentPage=0, size=5, totalPages=1, onPage
                     </tbody>
                 </table>
             </div>
-            <div className="">
+            {data.length > 0 ? <div className="">
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
-            </div>
+            </div> : <div className='table-not-found'>Not found</div>}
 
             {getSheet()}
             {getPopup()}

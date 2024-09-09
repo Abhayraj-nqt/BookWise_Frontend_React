@@ -6,6 +6,7 @@ import toast from '../../../components/toast/toast';
 
 // // Functions
 import { getAllCategories, createCategory, removeCategory, updateCategory } from '../../../api/services/category';
+import userEvent from '@testing-library/user-event';
 
 jest.mock('../../../api/services/category', () => ({
     getAllCategories: jest.fn(),
@@ -35,6 +36,25 @@ describe('Category component', () => {
         expect(screen.getByPlaceholderText('Search category')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument();
     });
+
+    test('renders table headers', async () => {
+        render(<Category setLoading={jest.fn()} rowCount={5} />)
+        const sNo = screen.getByRole('columnheader', {
+            name: /s\. no/i
+        })
+
+        const name = screen.getByRole('columnheader', {
+            name: /name/i
+        })
+
+        const actions = screen.getByRole('columnheader', {
+            name: /actions/i
+        })
+
+        expect(sNo).toBeInTheDocument();
+        expect(name).toBeInTheDocument();
+        expect(actions).toBeInTheDocument();
+    })
 
     test('fetches and displays categories', async () => {
 
@@ -167,5 +187,85 @@ describe('Category component', () => {
         await waitFor(() => expect(screen.queryByText('Fiction')).not.toBeInTheDocument());
     });
 
+    test('fetches categories on load', async () => {
+        render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+        await waitFor(() => {
+            expect(getAllCategories).toHaveBeenCalledWith({ page: 0, size: 5, sortBy: 'id', sortDir: 'desc', search: '' });
+        });
+    });
+
+    test('triggers category search when typing in the searchbar', async () => {
+        render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+        
+        const searchInput = screen.getByPlaceholderText('Search category');
+        
+        await waitFor(() => userEvent.type(searchInput, 'Fiction'));
+        // await waitFor(() => fireEvent.change(searchInput, { target: { value: 'Fiction' } }));
+
+        await waitFor(() => {
+            expect(getAllCategories).toHaveBeenCalledWith({
+                page: 0,
+                size: 5,
+                sortBy: 'id',
+                sortDir: 'desc',
+                search: ''
+            });
+        });
+    });
+
+    test('opens popup and adds new category', async () => {
+        render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+        await waitFor(() => fireEvent.click(screen.getByText('Add')));
+        await waitFor(() => fireEvent.change(screen.getByPlaceholderText("Enter category name"), { target: { value: 'New Category' } }));
+        await waitFor(() => fireEvent.click(screen.getByText('Save')));
+    
+        await waitFor(() => {
+            expect(createCategory).toHaveBeenCalledWith({ name: 'New Category' });
+            expect(toast.success).toHaveBeenCalledWith('Category created successfully');
+        });
+    });
+    
+    test('deletes a category after confirmation', async () => {
+        removeCategory.mockResolvedValue({ message: 'Successfully deleted' });
+        getAllCategories.mockResolvedValue({
+            content: [
+                { id: 1, name: 'Fiction' },
+                { id: 2, name: 'Non-Fiction' },
+                { id: 3, name: 'History' },
+                { id: 4, name: 'Politics' },
+            ],
+            totalPages: 1,
+        });
+        render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+       
+        await waitFor(() => fireEvent.click(screen.getByTestId(`delete-icon-1`)));
+        await waitFor(() => screen.getByText('Are you sure you want to delete this item? If you delete it then the corresponding books will also be deleted.'));
+        fireEvent.click(screen.getByText('Confirm'));
+    
+        await waitFor(() => {
+            expect(removeCategory).toHaveBeenCalledWith(1);
+            expect(toast.success).toHaveBeenCalledWith('Successfully deleted');
+        });
+    });
+    
+    
+    test('sorts categories by name', async () => {
+        render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+        const sortButton = screen.getByTestId('sort-Name');
+        fireEvent.click(sortButton);
+    
+        await waitFor(() => {
+            expect(getAllCategories).toHaveBeenCalledWith({
+                page: 0,
+                size: 5,
+                sortBy: 'name',
+                sortDir: 'asc',
+                search: ''
+            });
+        });
+    });
+    
+    
+    
 
 })
