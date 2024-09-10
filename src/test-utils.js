@@ -3,8 +3,6 @@ import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import store from './redux/store';
-// import rootReducer from '../redux/rootReducer';
-// import { addToast } from '../redux/toast/toastActions';
 
 
 const AllTheProviders = ({ children }) => {

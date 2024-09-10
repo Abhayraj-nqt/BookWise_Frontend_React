@@ -172,7 +172,7 @@ const User = ({setLoading, rowCount}) => {
   return (
     <div className='user-page'>
       <div className="user-header">
-        <Searchbar placeholder={'Search user'} onSearch={handleSearch} />
+        <Searchbar placeholder={'Search user by mobile'} onSearch={handleSearch} />
         <Button onClick={openPopup} varient={'primary'} >Add</Button>
       </div>
       <br />

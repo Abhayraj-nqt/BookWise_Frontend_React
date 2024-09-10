@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { API_CURRENT_USER, API_LOGIN } from './apiConstants/auth';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || `http://localhost:8080`
 
@@ -28,7 +29,9 @@ app.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            window.location.href = '/login';
+            if (error?.config?.url !== API_CURRENT_USER && error?.config?.url !== API_LOGIN) {
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }

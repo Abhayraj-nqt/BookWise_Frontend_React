@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 // CSS
 import './AdminUserHistory.css'
@@ -9,7 +9,7 @@ import DashboardHOC from '../../../components/hoc/dashboardHOC/DashboardHOC'
 import Table from '../../../components/table/Table'
 import IssuanceFilterPopup from '../../../components/popup/IssuanceFilterPopup'
 import toast from '../../../components/toast/toast'
-import { FilterIcon } from '../../../components/icons/Icons'
+import { BackwardIcon, FilterIcon } from '../../../components/icons/Icons'
 
 // Functions
 import { getUserByMobile, getUserHistory } from '../../../api/services/user'
@@ -27,6 +27,7 @@ const tableCols = [
 const AdminUserHistory = ({setLoading, rowCount}) => {
 
     const { mobile } = useParams();
+    const navigate = useNavigate();
 
     const [user, setUser] = useState();
     const [firstName, setFirstName] = useState('');
@@ -60,6 +61,10 @@ const AdminUserHistory = ({setLoading, rowCount}) => {
 
     const openFilter = () => setIsFilterOpen(true);
     const closeFilter = () => setIsFilterOpen(false);
+
+    const goBack = () => {
+        navigate(-1);
+    }
 
     const loadUserHistory = async () => {
         try {
@@ -119,7 +124,10 @@ const AdminUserHistory = ({setLoading, rowCount}) => {
 
     return (
         <div>
-            <h2 className='user-admin-history-title'>{firstName}'s history</h2>
+            <div className="history-header-admin">
+                <h2 className='user-admin-history-title'>{firstName}'s history</h2>
+                <div onClick={goBack} className="go-back-link"><BackwardIcon /> Go back</div>
+            </div>
             <div onClick={openFilter} className="filter-icon">
                 <span>Filter</span>
                 <FilterIcon size={20} />

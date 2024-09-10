@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 // CSS
 import './BookHistory.css'
@@ -11,6 +11,7 @@ import toast from '../../../components/toast/toast'
 
 // Functions
 import { getBookById, getBookHistory } from '../../../api/services/book'
+import { BackwardIcon } from '../../../components/icons/Icons'
 
 const tableCols = [
     "Id",
@@ -25,6 +26,7 @@ const tableCols = [
 const BookHistory = ({setLoading, rowCount}) => {
 
     const {bookId} = useParams();
+    const navigate = useNavigate();
 
     const [book, setBook] = useState();
     const [bookHistory, setBookHistory] = useState([]);
@@ -43,6 +45,10 @@ const BookHistory = ({setLoading, rowCount}) => {
     useEffect(() => {
         setSize(rowCount);
       }, [rowCount])
+
+    const goBack = () => {
+        navigate(-1);
+    }
 
     const loadBookHistory = async () => {
         try {
@@ -89,7 +95,10 @@ const BookHistory = ({setLoading, rowCount}) => {
 
   return (
         <div>
-            <h2 className='history-title'>{book?.title}'s history</h2>
+            <div className="history-header-admin">
+                <h2 className='history-title'>{book?.title}'s history</h2>
+                <div onClick={goBack} className="go-back-link"><BackwardIcon /> Go back</div>
+            </div>
             <Table colums={tableCols} data={bookHistory} currentPage={page} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} type={'userHistory'} />
         </div>
   )

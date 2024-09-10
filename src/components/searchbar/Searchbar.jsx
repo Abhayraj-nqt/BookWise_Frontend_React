@@ -14,7 +14,7 @@ const Searchbar = ({placeholder, onSearch, varient='primary', clearInput=false, 
 
   return (
     <div className='search-bar'>
-        <input onChange={(e) => {setSearchQuery(e.target.value); onSearch(e.target.value)}} className={`${varient === 'primary' ? 'bg-white' : 'bg-gray'}`} type="text" value={searchQuery} placeholder={placeholder}  />
+        <input onChange={(e) => {setSearchQuery(e.target.value); onSearch(e.target.value.trim())}} className={`${varient === 'primary' ? 'bg-white' : 'bg-gray'}`} type="text" value={searchQuery} placeholder={placeholder}  />
         {icon && <div onClick={() => onSearch(searchQuery)} className="search-icon">
             <SearchIcon size={20} />
         </div>}
