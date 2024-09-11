@@ -72,7 +72,6 @@ const CategoryPopup = ({title, isPopupOpen, closePopup, category, onEdit, onAdd,
     const handleAdd = () => {
         if (validateCategory()) {
             onAdd(categoryData);
-            closePopup();
         }
         
     }

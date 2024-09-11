@@ -95,7 +95,6 @@ const Book = ({setLoading, rowCount}) => {
       closePopup();
       toast.success(data?.message || `Successfully updated`);
     } catch (error) {
-      // closePopup();
       const msg = error?.response?.data?.message || 'Failed to update!'
       toast.error(msg)
     } finally {
@@ -146,7 +145,6 @@ const Book = ({setLoading, rowCount}) => {
       await loadBooks();
       toast.success(data?.message || `Book created successfully`);
     } catch (error) {
-      // closePopup();
       const msg = error?.response?.data?.message || 'Failed to add book!'
       toast.error(msg);
     } finally {

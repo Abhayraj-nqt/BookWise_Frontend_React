@@ -91,7 +91,6 @@ const User = ({setLoading, rowCount}) => {
       closePopup();
       toast.success(data?.message || `Successfully updated`)
     } catch (error) {
-      closePopup()
       const msg = error?.response?.data?.message || 'Failed to update user';
       toast.error(msg);
     } finally {
@@ -140,7 +139,6 @@ const User = ({setLoading, rowCount}) => {
       await loadUsers();
       toast.success(data?.message || `User registered successfully`);
     } catch (error) {
-      // closePopup();
       const msg = error?.response?.data?.message || `Failed to register user`
       toast.error(msg);
     } finally {

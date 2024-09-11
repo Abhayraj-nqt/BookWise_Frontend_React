@@ -103,7 +103,6 @@ describe('CategoryPopup component', () => {
 
         await waitFor(() => {
             expect(mockOnAdd).toHaveBeenCalledWith({ id: '', name: 'New Category' });
-            expect(mockClosePopup).toHaveBeenCalled();
         });
     });
 

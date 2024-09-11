@@ -85,8 +85,8 @@ const Category = ({setLoading, rowCount}) => {
     try {
       setLoading(true);
       const data = await updateCategory(categoryObj?.id, { "name": categoryObj?.name });
-      await loadCategories();
       closePopup();
+      await loadCategories();
       toast.success(data?.message || `Successfully updated`);
     } catch (error) {
       // closePopup();
@@ -128,10 +128,10 @@ const Category = ({setLoading, rowCount}) => {
     try {
       setLoading(true);
       const data = await createCategory({ "name": categoryObj?.name });
-      setCategoryData({
-        id: '',
-        name: '',
-      })
+      // setCategoryData({
+      //   id: '',
+      //   name: '',
+      // })
       closePopup();
       await loadCategories();
       toast.success(data?.message || `Category created successfully`);

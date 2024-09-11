@@ -110,12 +110,17 @@ const BookSheet = ({ isSheetOpen, onClose, bookData, setLoading, renderList }) =
 
     const validate = () => {
         let isValid = true;
+
+        const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
         const newErrors = {
             returnTime: ''
         }
 
         if (!validateNotEmpty(returnTime)) {
             newErrors.returnTime = `Return time is required!`
+            isValid = false;
+        } else if (returnTime < time) {
+            newErrors.returnTime = `Return time can't be before than current time`
             isValid = false;
         }
 

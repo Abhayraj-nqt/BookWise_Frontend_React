@@ -135,7 +135,6 @@ const BookPopup = ({title, isPopupOpen, closePopup, book, onEdit, onAdd, type='a
     const handleAdd = () => {
         if (validateBook()) {
             onAdd(bookData);
-            closePopup();
         }
     }
 

@@ -3,18 +3,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AlertPopup from './AlertPopup';
 
-// Mock the Popup component to isolate the test case
-// jest.mock('./Popup', () => ({ isOpen, title, onClose, children }) => {
-//     return isOpen ? (
-//         <div data-testid="popup">
-//             <h2>{title}</h2>
-//             <button data-testid="close-button" onClick={onClose}>×</button>
-//             {children}
-//         </div>
-//     ) : null;
-// });
-
-
 describe('AlertPopup Component', () => {
     const mockOnClose = jest.fn();
     const mockOnConfirm = jest.fn();
