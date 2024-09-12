@@ -157,9 +157,7 @@ const UserSheet = ({ isSheetOpen, onClose, userData, setLoading }) => {
             <div className="user-sheet">
                 <h2>Issue book to user</h2>
                 <div className="sheet-serch-bar">
-                    {/* <Searchbar placeholder={'Search book by title'} onSearch={handleSearch} varient={'secondary'} clearInput={clearInput} icon={false} /> */}
                     <SelectSearch  options={bookList} setOptions={setBookList} onSearch={handleSearch} placeholder='Enter book title' onSelect={handleSelect} clearInput={clearSheetInput} type={'book'} />
-                    {/* <Button onClick={handleClickSearch} varient={'primary'}>Search</Button> */}
                 </div>
                 <div className="">
                     <Select label={'Type'} name={'issuanceType'} value={issuanceType} onChange={(e) => setIssuanceType(e.target.value)} placeholder={'Select issuance typr'} >

@@ -37,12 +37,23 @@ const IssuancePopup = ({title, isPopupOpen, closePopup, issuance, onEdit, onAdd,
     const [errors, setErrors] = useState(initalErrors);
 
     useEffect(() => {
+
+        let returnTimePopup = '';
+
+        if (issuance?.expectedReturnTime) {
+            if (issuance?.issuanceType === 'In house') {
+                returnTimePopup = new Date(issuance?.expectedReturnTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+            } else if (issuance?.issuanceType === 'Take away') {
+                returnTimePopup = new Date(issuance?.expectedReturnTime).toLocaleDateString('en-CA');
+            }
+        }
+
         setIssuanceData({
             id: issuance?.id || '',
             user: issuance?.user || '',
             book: issuance?.book || '',
             issueTime: issuance?.issueTime || '',
-            returnTime: issuance?.expectedReturnTime || '',
+            returnTime: returnTimePopup,
             status: issuance?.status || '',
             issuanceType: issuance?.issuanceType || '',
         })
@@ -76,6 +87,8 @@ const IssuancePopup = ({title, isPopupOpen, closePopup, issuance, onEdit, onAdd,
 
     const validateIssuance = () => {
         let isValid = true;
+        const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+        
         const newErrors = {
             status: '',
             issuanceType: '',
@@ -94,6 +107,9 @@ const IssuancePopup = ({title, isPopupOpen, closePopup, issuance, onEdit, onAdd,
 
         if (!validateNotEmpty(issuanceData.returnTime)) {
             newErrors.returnTime = 'Return time is required!'
+            isValid = false;
+        } else if (issuanceData.issuanceType === 'In house' && issuanceData.returnTime < time) {
+            newErrors.returnTime = `Return time can't be before than current time`
             isValid = false;
         }
 
@@ -126,6 +142,8 @@ const IssuancePopup = ({title, isPopupOpen, closePopup, issuance, onEdit, onAdd,
                 }
 
                 issuanceData.returnTime = formatedDateTime;
+            } else {
+                issuanceData.returnTime = issuance?.expectedReturnTime;
             }
 
             onEdit(issuanceData);

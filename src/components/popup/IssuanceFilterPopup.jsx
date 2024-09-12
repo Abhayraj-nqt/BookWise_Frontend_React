@@ -37,6 +37,13 @@ const UserHistoryFilterPopup = ({ onFilter, isOpen, onClose, title }) => {
         onFilter(filterObj);
     }
 
+    const handleClearFilter = () => {
+        setIssueTimeFrom('');
+        setIssueTimeTo('');
+        setStatus('');
+        setType('');
+    }
+
     return (
         <Popup isOpen={isOpen} title={title} onClose={onClose} >
 
@@ -62,7 +69,8 @@ const UserHistoryFilterPopup = ({ onFilter, isOpen, onClose, title }) => {
             </div>
 
             <div className="filter-btn">
-                <Button varient='primary' onClick={handleFilter}>Filter</Button>
+                <Button varient='primary' onClick={handleFilter}>Search</Button>
+                <Button varient='secondary' onClick={handleClearFilter}>Clear</Button>
             </div>
 
         </Popup>

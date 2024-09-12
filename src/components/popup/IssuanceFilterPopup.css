@@ -26,3 +26,8 @@
     width: 1rem;
     cursor: pointer;
 }
+
+.filter-btn {
+    display: flex;
+    gap: 0.5rem;
+}

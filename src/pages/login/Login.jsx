@@ -14,7 +14,7 @@ import Loader from '../../components/loader/Loader'
 import { login } from '../../api/services/auth'
 import { loginUser } from '../../redux/auth/authActions'
 import toast from '../../components/toast/toast'
-import { validateEmailOrMobile, validateNotEmpty } from '../../libs/utils'
+import { validateEmail, validateEmailDomain, validateEmailOrMobile, validateNotEmpty } from '../../libs/utils'
 
 // Constants
 import { images } from '../../libs/constants'
@@ -56,6 +56,9 @@ const Login = () => {
 
     if (!validateEmailOrMobile(username)) {
       newErrors.username = 'Enter a valid email or 10-digit mobile number.';
+      isValid = false;
+    } else if (validateEmail(username) && !validateEmailDomain(username)) {
+      newErrors.username = `Enter a valid email domain!`
       isValid = false;
     }
 

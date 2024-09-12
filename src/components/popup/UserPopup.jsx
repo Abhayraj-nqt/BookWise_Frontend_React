@@ -6,7 +6,7 @@ import Input from '../form/input/Input';
 import Button from '../button/Button';
 
 // Functions
-import { validateEmail, validateMobile, validateNotEmpty, validatePassword } from '../../libs/utils';
+import { validateAlphabet, validateEmail, validateEmailDomain, validateMobile, validateNotEmpty, validatePassword } from '../../libs/utils';
 
 const initialErrors = {
     name: '',
@@ -75,6 +75,9 @@ const UserPopup = ({ title, isPopupOpen, closePopup, user, onEdit, onAdd, type =
         if (!validateNotEmpty(userData.name)) {
             newErrors.name = `Name is required!`
             isValid = false;
+        } else if (!validateAlphabet(userData.name)) {
+            newErrors.name = `Special characters/numbers are not alowed!`
+            isValid = false;
         }
 
         if (!validateNotEmpty(userData.email)) {
@@ -82,6 +85,9 @@ const UserPopup = ({ title, isPopupOpen, closePopup, user, onEdit, onAdd, type =
             isValid = false;
         } else if (!validateEmail(userData.email)) {
             newErrors.email = `Enter a valid email!`
+            isValid = false;
+        } else if (!validateEmailDomain(userData.email)) {
+            newErrors.email = `Enter a valid email domain!`
             isValid = false;
         }
 

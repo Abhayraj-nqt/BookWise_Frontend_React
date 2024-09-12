@@ -40,3 +40,9 @@ export const validateAlphabet = (text) => {
 export const validateMinLength = (text, minLength) => {
     return text.length >= minLength;
 }
+
+export const validateEmailDomain = (text='') => {
+    const domains = ['.com', '.in', '.org', '.net'];
+    const extractedDomain = text.substring(text.lastIndexOf('.'));
+    return domains.includes(extractedDomain);
+}

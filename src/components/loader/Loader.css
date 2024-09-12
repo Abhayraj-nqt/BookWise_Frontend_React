@@ -2,8 +2,6 @@
     position: relative;
     height: 100vh;
     width: 100%;
-    /* background-color: rgba(0, 0, 0, 0.221); */
-    /* background-color: rgba(255, 255, 255, 0.767); */
     background-color: rgba(255, 255, 255, 0.579);
     z-index: 10009;
     position: fixed;
