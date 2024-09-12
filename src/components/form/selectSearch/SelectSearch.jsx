@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+
+// CSS
 import './SelectSearch.css'
+
+// Components
 import Input from '../input/Input';
 import Button from '../../button/Button';
-import toast from '../../toast/toast';
 
 const SelectSearch = ({placeholder='"Type to search..."', label, onSearch, onSelect, options=[], setOptions, type, loading=false, clearInput=false, showBtn=true}) => {
 
@@ -10,7 +13,6 @@ const SelectSearch = ({placeholder='"Type to search..."', label, onSearch, onSel
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -94,7 +96,6 @@ const SelectSearch = ({placeholder='"Type to search..."', label, onSearch, onSel
               ))}
             </ul>
           ) : (
-            // inputValue && <div style={{ padding: '8px' }}>No results found</div>
             <></>
           )}
         </div>

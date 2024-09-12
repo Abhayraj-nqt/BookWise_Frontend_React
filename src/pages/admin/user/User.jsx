@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
+
+// CSS
 import './User.css'
 import DashboardHOC from '../../../components/hoc/dashboardHOC/DashboardHOC'
-import { useSelector } from 'react-redux'
+
+// Components
 import { getAllUsers, registerUser, removeUser, updateUser } from '../../../api/services/user'
 import toast from '../../../components/toast/toast'
 import Searchbar from '../../../components/searchbar/Searchbar'
@@ -17,15 +20,13 @@ const userCols = [
   "Email",
 ]
 
-const User = () => {
-
-  const auth = useSelector(state => state.auth);
+const User = ({setLoading, rowCount}) => {
 
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(5);
+  const [size, setSize] = useState(rowCount || 5);
   const [sortBy, setSortBy] = useState('id');
-  const [sortDir, setSortDir] = useState('asc');
+  const [sortDir, setSortDir] = useState('desc');
   const [search, setSearch] = useState('')
   const [users, setUsers] = useState([])
 
@@ -45,8 +46,14 @@ const User = () => {
   }, [page, size, sortBy, sortDir])
 
   useEffect(() => {
+    setSize(rowCount);
+  }, [rowCount])
+
+  useEffect(() => {
     const timeout = setTimeout(() => {
-      loadUsers();
+      if (search?.length === 0 || search?.length >= 3) {
+        loadUsers();
+      }
     }, 1000)
 
     return () => clearTimeout(timeout);
@@ -60,30 +67,34 @@ const User = () => {
 
   const loadUsers = async () => {
     try {
+      setLoading(true);
       const data = await getAllUsers({page, size, sortBy, sortDir, search});
-
       if (Array.isArray(data)) {
         setUsers(data)
       } else {
-        setUsers(data.content);
-        setTotalPages(data.totalPages);
+        setUsers(data?.content);
+        setTotalPages(data?.totalPages);
       }
     } catch (error) {
-      console.log('Error fetching users', error);
+      toast.error('Error fetching users');
+    } finally {
+      setLoading(false);
     }
   }
 
-  const handleEdit = async (userObj) => {
+  const handleEdit = async (userObj, mobile) => {
     try {
       userObj.password = btoa(userObj.password);
-      const data = await updateUser(userObj.mobileNumber, userObj);
+      setLoading(true);
+      const data = await updateUser(mobile, userObj);
       await loadUsers();
       closePopup();
       toast.success(data?.message || `Successfully updated`)
     } catch (error) {
-      console.log(error);
-      closePopup()
-      toast.error('Failed to update user');
+      const msg = error?.response?.data?.message || 'Failed to update user';
+      toast.error(msg);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -95,13 +106,17 @@ const User = () => {
   const handleConfirmDelete = async (confirm) => {
     if (confirm && deleteId) {
       try {
-        const data = await removeUser(deleteId, auth.token);
+        setLoading(true);
+        const data = await removeUser(deleteId);
         await loadUsers();
         toast.success(data?.message || `User deleted successfully`);
         setDeleteId(undefined);
       } catch (error) {
-        toast.error('Failed to delete user')
+        const msg = error?.response?.data?.message || 'Failed to delete!';
+        toast.error(msg);
         setDeleteId(undefined);
+      }  finally {
+        setLoading(false);
       }
     } else {
       setDeleteId(undefined);
@@ -111,6 +126,7 @@ const User = () => {
   const handleAddNewUser = async (userObj) => {
     try {
       delete userObj?.id;
+      setLoading(true)
       const data = await registerUser(userObj);
       setUserData({
         id: '',
@@ -123,8 +139,10 @@ const User = () => {
       await loadUsers();
       toast.success(data?.message || `User registered successfully`);
     } catch (error) {
-      closePopup();
-      toast.error(`Failed to register user`);
+      const msg = error?.response?.data?.message || `Failed to register user`
+      toast.error(msg);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -152,18 +170,18 @@ const User = () => {
   return (
     <div className='user-page'>
       <div className="user-header">
-        <Searchbar placeholder={'Search user'} onSearch={handleSearch} />
+        <Searchbar placeholder={'Search user by mobile'} onSearch={handleSearch} />
         <Button onClick={openPopup} varient={'primary'} >Add</Button>
       </div>
       <br />
 
       <div className="">
-        <Table colums={userCols} data={users} currentPage={page} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} addEdit={true} addDelete={true} onEdit={handleEdit} onDelete={handleDelete} type={'user'}  />
+        <Table colums={userCols} data={users} currentPage={page} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} addEdit={true} addDelete={true} onEdit={handleEdit} onDelete={handleDelete} type={'user'} setLoading={setLoading} />
       </div>
 
       <UserPopup title={'Add user'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewUser} category={userData} type='add'  />
 
-      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} />
+      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} message={`Are you really wanted to delete!\nIf you delete then the corresponding issuences will also be deleted.`} />
 
     </div>
   )

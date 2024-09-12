@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react'
+
+// Components
 import Popup from './Popup';
 import Input from '../form/input/Input';
 import Select from '../form/select/Select';
 import Button from '../button/Button';
+
+// Functions
 import { getAllCategories } from '../../api/services/category';
 import { validateAlphabet, validateMinLength, validateNotEmpty } from '../../libs/utils';
+import toast from '../toast/toast';
 
 const initialErrors = {
     title: '',
@@ -44,11 +49,10 @@ const BookPopup = ({title, isPopupOpen, closePopup, book, onEdit, onAdd, type='a
 
     const loadCategories = async () => {
       try {
-        const data = await getAllCategories(undefined, undefined, 'name', 'asc')
-        console.log(data);
+        const data = await getAllCategories({"page": undefined, "size":undefined, sortBy:'name', sortDir:'asc'})
         setCategories(data);
       } catch (error) {
-        console.log(error);
+        toast.error('Error fetching categories')
       }
     }
 
@@ -73,6 +77,10 @@ const BookPopup = ({title, isPopupOpen, closePopup, book, onEdit, onAdd, type='a
     }
 
     const validateBook = () => {
+
+        bookData.author = bookData?.author?.trim();
+        bookData.title = bookData?.title?.trim();
+
         let isValid = true;
         const newErrors = {
             title: '',
@@ -127,13 +135,12 @@ const BookPopup = ({title, isPopupOpen, closePopup, book, onEdit, onAdd, type='a
     const handleAdd = () => {
         if (validateBook()) {
             onAdd(bookData);
-            closePopup();
         }
     }
 
     const handleEdit = () => {
         if (validateBook()) {
-            onEdit(bookData); 
+            onEdit(bookData);
             closePopup();
         }
         

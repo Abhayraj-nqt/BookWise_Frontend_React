@@ -38,7 +38,7 @@ export const BookIcon = ({ size = 25 }) => {
     )
 }
 
-export const BooksIcon = ({size = 25 }) => {
+export const BooksIcon = ({ size = 25 }) => {
     return (
         <svg stroke="currentColor" fill="currentColor" strokeWidth="0" role="img" viewBox="0 0 24 24" height={size} width={size} xmlns="http://www.w3.org/2000/svg">
             <path d="M.3013 17.6146c-.1299-.3387-.5228-1.5119-.1337-2.4314l9.8273 5.6738a.329.329 0 0 0 .3299 0L24 12.9616v2.3542l-13.8401 7.9906-9.8586-5.6918zM.1911 8.9628c-.2882.8769.0149 2.0581.1236 2.4261l9.8452 5.6841L24 9.0823V6.7275L10.3248 14.623a.329.329 0 0 1-.3299 0L.1911 8.9628zm13.1698-1.9361c-.1819.1113-.4394.0015-.4852-.2064l-.2805-1.1336-2.1254-.1752a.33.33 0 0 1-.1378-.6145l5.5782-3.2207-1.7021-.9826L.6979 8.4935l9.462 5.463 13.5104-7.8004-4.401-2.5407-5.9084 3.4113zm-.1821-1.7286.2321.938 5.1984-3.0014-2.0395-1.1775-4.994 2.8834 1.3099.108a.3302.3302 0 0 1 .2931.2495zM24 9.845l-13.6752 7.8954a.329.329 0 0 1-.3299 0L.1678 12.0667c-.3891.919.003 2.0914.1332 2.4311l9.8589 5.692L24 12.1993V9.845z"></path>
@@ -64,7 +64,7 @@ export const DeleteIcon = ({ size = 25 }) => {
 
 export const EditIcon = ({ size = 25 }) => {
     return (
-        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 576 512" height={size} width={size} xmlns="http://www.w3.org/2000/svg">
+        <svg data-testid="edit-icon-svg" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 576 512" height={size} width={size} xmlns="http://www.w3.org/2000/svg">
             <path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"></path>
         </svg>
     )
@@ -125,7 +125,7 @@ export const InfoIcon = ({ size = 25 }) => {
 
 export const SearchIcon = ({ size = 25 }) => {
     return (
-        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height={size} width={size} xmlns="http://www.w3.org/2000/svg">
+        <svg data-testid="search-icon-svg" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height={size} width={size} xmlns="http://www.w3.org/2000/svg">
             <path d="M10.25 2a8.25 8.25 0 0 1 6.34 13.53l5.69 5.69a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-5.69-5.69A8.25 8.25 0 1 1 10.25 2ZM3.5 10.25a6.75 6.75 0 1 0 13.5 0 6.75 6.75 0 0 0-13.5 0Z"></path>
         </svg>
     )
@@ -150,7 +150,7 @@ export const UserIcon = ({ size = 25 }) => {
 
 export const BackwardIcon = ({ size = 25 }) => {
     return (
-        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="25" width="25" xmlns="http://www.w3.org/2000/svg">
+        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height={size} width={size} xmlns="http://www.w3.org/2000/svg">
             <path fill="none" d="M0 0h24v24H0z"></path>
             <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path>
         </svg>
@@ -159,17 +159,71 @@ export const BackwardIcon = ({ size = 25 }) => {
 
 export const ForwardIcon = ({ size = 25 }) => {
     return (
-        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="25" width="25" xmlns="http://www.w3.org/2000/svg">
+        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height={size} width={size} xmlns="http://www.w3.org/2000/svg">
             <path fill="none" d="M0 0h24v24H0z"></path>
             <path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
         </svg>
     )
 }
 
-export const SortingIcon = ({size = 25}) => {
+export const SortingIcon = ({ size = 15 }) => {
     return (
-        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" version="1.2" baseProfile="tiny" viewBox="0 0 24 24" height="15" width="15" xmlns="http://www.w3.org/2000/svg">
+        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" version="1.2" baseProfile="tiny" viewBox="0 0 24 24" height={size} width={size} xmlns="http://www.w3.org/2000/svg">
             <path d="M18.2 9.3l-6.2-6.3-6.2 6.3c-.2.2-.3.4-.3.7s.1.5.3.7c.2.2.4.3.7.3h11c.3 0 .5-.1.7-.3.2-.2.3-.5.3-.7s-.1-.5-.3-.7zM5.8 14.7l6.2 6.3 6.2-6.3c.2-.2.3-.5.3-.7s-.1-.5-.3-.7c-.2-.2-.4-.3-.7-.3h-11c-.3 0-.5.1-.7.3-.2.2-.3.5-.3.7s.1.5.3.7z"></path>
+        </svg>
+    )
+}
+
+export const SpinnerIcon = ({ size = 200 }) => {
+    return (
+        <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 100 100" 
+            preserveAspectRatio="xMidYMid" 
+            width={size} 
+            height={size} 
+            style={{ shapeRendering: "auto", display: "block", background: "transparent" }}
+        >
+            <g>
+                <circle r="20" fill="#fb3453" cy="50" cx="30">
+                    <animate 
+                        begin="-0.5s" 
+                        values="30;70;30" 
+                        keyTimes="0;0.5;1" 
+                        dur="1s" 
+                        repeatCount="indefinite" 
+                        attributeName="cx"
+                    />
+                </circle>
+                <circle r="20" fill="#ffebee" cy="50" cx="70">
+                    <animate 
+                        begin="0s" 
+                        values="30;70;30" 
+                        keyTimes="0;0.5;1" 
+                        dur="1s" 
+                        repeatCount="indefinite" 
+                        attributeName="cx"
+                    />
+                </circle>
+                <circle r="20" fill="#fb3453" cy="50" cx="30">
+                    <animate 
+                        begin="-0.5s" 
+                        values="30;70;30" 
+                        keyTimes="0;0.5;1" 
+                        dur="1s" 
+                        repeatCount="indefinite" 
+                        attributeName="cx"
+                    />
+                    <animate 
+                        repeatCount="indefinite" 
+                        dur="1s" 
+                        keyTimes="0;0.499;0.5;1" 
+                        calcMode="discrete" 
+                        values="0;0;1;1" 
+                        attributeName="fill-opacity"
+                    />
+                </circle>
+            </g>
         </svg>
     )
 }

@@ -1,65 +1,24 @@
-import React, { useEffect, useState } from 'react'
-import './IssuanceFilterPopup.css'
+import React, { useState } from 'react'
+
+// Components
 import Popup from './Popup'
-import { getAllBooks } from '../../api/services/book';
-import Input from '../form/input/Input';
 import Select from '../form/select/Select';
 import DatePicker from '../form/date/DatePicker';
 import Button from '../button/Button';
-import { useSelector } from 'react-redux';
+
+// CSS
+import './IssuanceFilterPopup.css'
 
 const UserHistoryFilterPopup = ({ onFilter, isOpen, onClose, title }) => {
 
-    const auth = useSelector(state => state.auth);
-
-    const [allBooks, setAllBooks] = useState([]);
-    const [selectedBooks, setSelectedBooks] = useState([]);
     const [issueTimeFrom, setIssueTimeFrom] = useState();
     const [issueTimeTo, setIssueTimeTo] = useState();
     const [status, setStatus] = useState('');
     const [type, setType] = useState('');
 
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-    useEffect(() => {
-        loadAllBooks();
-    }, [])
-
-    const loadAllBooks = async () => {
-        try {
-            const data = await getAllBooks();
-
-            if (Array.isArray(data)) {
-                setAllBooks(data);
-            } else {
-                setAllBooks(data.content);
-            }
-        } catch (error) {
-            console.log('Error fetching books', error);
-        }
-    }
-
-    const toggleDropdown = () => setIsDropdownOpen(prev => !prev);
-
-    const handleSelectBooks = (e) => {
-        const { value, checked } = e.target;
-        if (checked) {
-            setSelectedBooks([...selectedBooks, value]);
-        } else {
-            setSelectedBooks(selectedBooks.filter(item => item !== value));
-        }
-    }
-
     const handleFilter = () => {
         const filterObj = {
 
-        }
-
-        if (selectedBooks.length > 0) {
-            // TODO - Create proper , seperated values
-            const titles = selectedBooks.toString();
-
-            filterObj.titles = titles;
         }
 
         if (issueTimeFrom) {
@@ -78,27 +37,15 @@ const UserHistoryFilterPopup = ({ onFilter, isOpen, onClose, title }) => {
         onFilter(filterObj);
     }
 
+    const handleClearFilter = () => {
+        setIssueTimeFrom('');
+        setIssueTimeTo('');
+        setStatus('');
+        setType('');
+    }
+
     return (
         <Popup isOpen={isOpen} title={title} onClose={onClose} >
-            <div className="filter-select-books">
-                <div className="" onClick={() => toggleDropdown()}>
-                    <Input
-                        type='text'
-                        placeholder={'Select books'}
-                        value={selectedBooks.toString()}
-                        label={'Select books'}
-                        onChange={() => {}}
-
-                    />
-                </div>
-                {isDropdownOpen && allBooks?.length > 0 &&
-                    <div className='book-list-dropdown' onMouseLeave={() =>  setIsDropdownOpen(false)} onMouseOver={() => setIsDropdownOpen(true)} >
-                        {allBooks.map(book => <div key={book?.id} className='book-list-dropdown-item'>
-                            <input type="checkbox" value={book?.title} onChange={handleSelectBooks} checked={selectedBooks.includes(book?.title)} />
-                            <div className="">{book?.title}</div>
-                        </div>)}
-                    </div>}
-            </div>
 
             <div className="filter-select-data">
                 <DatePicker label={'Issuance from'} onChange={(e) => setIssueTimeFrom(e.target.value)} value={issueTimeFrom} />
@@ -122,7 +69,8 @@ const UserHistoryFilterPopup = ({ onFilter, isOpen, onClose, title }) => {
             </div>
 
             <div className="filter-btn">
-                <Button varient='primary' onClick={handleFilter}>Filter</Button>
+                <Button varient='primary' onClick={handleFilter}>Search</Button>
+                <Button varient='secondary' onClick={handleClearFilter}>Clear</Button>
             </div>
 
         </Popup>

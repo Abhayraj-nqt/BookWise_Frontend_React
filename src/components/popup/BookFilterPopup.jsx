@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
+
+// Components
 import Popup from './Popup'
-import { getAllCategories } from '../../api/services/category';
 import Button from '../button/Button';
 import Select from '../form/select/Select';
-import Input from '../form/input/Input';
+import toast from '../toast/toast'
+
+// Functions
+import { getAllCategories } from '../../api/services/category';
 
 const BookFilterPopup = ({ title, isPopupOpen, closePopup, onFilter }) => {
 
@@ -19,25 +23,12 @@ const BookFilterPopup = ({ title, isPopupOpen, closePopup, onFilter }) => {
         loadCategories();
     }, []);
 
-    useEffect(() => {
-        loadAuthors();
-    }, [])
-
     const loadCategories = async () => {
         try {
             const data = await getAllCategories(undefined, undefined, 'name', 'asc')
             setCategories(data);
         } catch (error) {
-            console.log(error);
-        }
-    }
-
-    const loadAuthors = async () => {
-        try {
-            // TODO - Make an api call to fetch all authors
-            console.log('Authors loaded', authors);
-        } catch (error) {
-            console.log(error);
+            toast.error('Error fetching categories')
         }
     }
 

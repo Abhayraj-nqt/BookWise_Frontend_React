@@ -8,18 +8,16 @@ import DashboardHOC from '../../../components/hoc/dashboardHOC/DashboardHOC'
 import Searchbar from '../../../components/searchbar/Searchbar'
 import Button from '../../../components/button/Button'
 import Table from '../../../components/table/Table'
-
 import BookPopup from '../../../components/popup/BookPopup'
-import { useSelector } from 'react-redux'
-import { createBook, getAllBooks, removeBook, updateBook } from '../../../api/services/book'
-import toast from '../../../components/toast/toast'
 import AlertPopup from '../../../components/popup/AlertPopup'
+import toast from '../../../components/toast/toast'
 
-const bookCols = ['Id', 'Title', 'Author', 'Total Qty', 'Avl. Qty', 'Category'];
+// Functions
+import { createBook, getAllBooks, removeBook, updateBook } from '../../../api/services/book'
 
-const Book = () => {
+const bookCols = ['S. no.', 'Title', 'Author', 'Total qty', 'Avl. qty', 'Category'];
 
-  const auth = useSelector(state => state.auth);
+const Book = ({setLoading, rowCount}) => {
 
   const [bookData, setBookData] = useState({
     id: '',
@@ -32,34 +30,36 @@ const Book = () => {
 
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(5);
+  const [size, setSize] = useState(rowCount || 5);
   const [sortBy, setSortBy] = useState('id');
   const [sortDir, setSortDir] = useState('desc');
   const [search, setSearch] = useState('')
+  const [renderUtil, setRenderUtil] = useState(false);
 
   const [books, setBooks] = useState([])
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteId, setDeleteId] = useState();
 
   const openPopup = () => setIsPopupOpen(true);
   const closePopup = () => setIsPopupOpen(false);
 
-  const openFilter = () => setIsFilterOpen(true);
-  const closeFilter = () => setIsFilterOpen(false);
-
   const openAlert = () => setIsAlertOpen(true);
   const closeAlert = () => setIsAlertOpen(false);
 
   useEffect(() => {
     loadBooks();
-  }, [page, size, sortBy, sortDir])
+  }, [page, size, sortBy, sortDir, renderUtil])
+
+  useEffect(() => {
+    setSize(rowCount);
+  }, [rowCount])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      loadBooks();
+      if (search?.length === 0 || search?.length >= 3) {
+        loadBooks();
+      }
     }, 1000)
 
     return () => clearTimeout(timeout);
@@ -67,32 +67,38 @@ const Book = () => {
 
   const loadBooks = async () => {
     try {
+      setLoading(true);
       const data = await getAllBooks({page, size, sortBy, sortDir, search});
-      console.log(data);
-      
       if (Array.isArray(data)) {
         setBooks(data);
       } else {
-        setBooks(data.content);
-        setTotalPages(data.totalPages);
+        setBooks(data?.content);
+        setTotalPages(data?.totalPages);
       }
     } catch (error) {
-      console.log('Error fetching books', error);
+      toast.error('Error fetching books');
+    } finally {
+      setLoading(false);
     }
   }
+
+  const renderList = () => setRenderUtil(prev => !prev);
 
   const handleEdit = async (bookObj) => {
     const id = bookObj?.id;
     delete bookObj?.id;
     
     try {
+      setLoading(true);
       const data = await updateBook(id, bookObj);
       await loadBooks();
       closePopup();
       toast.success(data?.message || `Successfully updated`);
     } catch (error) {
-      closePopup();
-      toast.error(`Failed to update`)
+      const msg = error?.response?.data?.message || 'Failed to update!'
+      toast.error(msg)
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -104,13 +110,17 @@ const Book = () => {
   const handleConfirmDelete = async (confirm) => {
     if (confirm && deleteId) {
       try {
+        setLoading(true);
         const data = await removeBook(deleteId);
         await loadBooks();
         toast.success(data?.message || `Successfully deleted`);
         setDeleteId(undefined);
       } catch (error) {
-        toast.error('Failed to delete.');
+        const msg = error?.response?.data?.message || 'Failed to delete!';
+        toast.error(msg);
         setDeleteId(undefined);
+      } finally {
+        setLoading(false);
       }
     } else {
       setDeleteId(undefined);
@@ -119,9 +129,9 @@ const Book = () => {
 
   const handleAddNewBook = async (bookObj) => {
     delete bookObj?.id;
-    console.log('ADD', bookObj);
 
     try {
+      setLoading(true);
       const data = await createBook(bookObj);
       setBookData({
         id: '',
@@ -135,23 +145,27 @@ const Book = () => {
       await loadBooks();
       toast.success(data?.message || `Book created successfully`);
     } catch (error) {
-      closePopup();
-      toast.error(`Failed to create book!`);
+      const msg = error?.response?.data?.message || 'Failed to add book!'
+      toast.error(msg);
+    } finally {
+      setLoading(false);
     }
     
   }
 
   const handleSort = (col, isDesc) => {
+    
     const colMapping = {
       'Id': 'id',
       'Title': 'title',
       'Author': 'author',
       'Total qty': 'totalQty',
       'Avl. qty': 'avlQty',
-      'Category': 'category',
+      'Category': 'category.name',
     }
 
     setSortBy(colMapping[col]);
+    
     if (isDesc) {
       setSortDir('desc');
     } else {
@@ -163,26 +177,24 @@ const Book = () => {
     setSearch(searchQuery);
   };
 
-  const handleFilter = (filterObj) => {
-    console.log(filterObj);
-  }
-
   return (
-    <div className='book-page'>
-      <div className="book-header">
-      
-        <Searchbar placeholder={'Search book'} onSearch={handleSearch} />
-        <Button onClick={openPopup} varient={'primary'} >Add</Button>
-      </div>
-      <br />
+    <>
+      <div className='book-page'>
+        <div className="book-header">
+        
+          <Searchbar placeholder={'Search book'} onSearch={handleSearch} />
+          <Button onClick={openPopup} varient={'primary'} >Add</Button>
+        </div>
+        <br />
 
-      <div className="">
-        <Table colums={bookCols} data={books} currentPage={page} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} addDelete={true} addEdit={true} onEdit={handleEdit} onDelete={handleDelete} type={'book'} />
-      </div>
+        <div className="">
+          <Table colums={bookCols} data={books} currentPage={page} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} addDelete={true} addEdit={true} onEdit={handleEdit} onDelete={handleDelete} type={'book'} setLoading={setLoading} renderList={renderList} />
+        </div>
 
-      <BookPopup title={'Add book'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewBook} book={bookData} type='add' />
-      <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} />
-    </div>
+        <BookPopup title={'Add book'} isPopupOpen={isPopupOpen} closePopup={closePopup} onAdd={handleAddNewBook} book={bookData} type='add' />
+        <AlertPopup isOpen={isAlertOpen} onClose={closeAlert} onConfirm={handleConfirmDelete} message={`Are you really wanted to delete!\nIf you delete then the corresponding issuences will also be deleted.`} />
+      </div>
+    </>
   )
 }
 

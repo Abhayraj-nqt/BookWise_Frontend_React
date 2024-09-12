@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { ErrorIcon } from '../icons/Icons'
 
+import { ErrorIcon } from '../icons/Icons'
 import { toastIcons } from '../../libs/constants'
 import { removeToast } from '../../redux/toast/toastActions'
 

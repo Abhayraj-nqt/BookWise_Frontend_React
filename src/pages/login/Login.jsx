@@ -8,12 +8,13 @@ import './Login.css'
 // Components
 import Input from '../../components/form/input/Input'
 import Button from '../../components/button/Button'
+import Loader from '../../components/loader/Loader'
 
 // Functions
 import { login } from '../../api/services/auth'
 import { loginUser } from '../../redux/auth/authActions'
 import toast from '../../components/toast/toast'
-import { validateEmailOrMobile, validateNotEmpty, validatePassword } from '../../libs/utils'
+import { validateEmail, validateEmailDomain, validateEmailOrMobile, validateNotEmpty } from '../../libs/utils'
 
 // Constants
 import { images } from '../../libs/constants'
@@ -36,6 +37,8 @@ const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState(initialErrors);
 
+  const [loading, setLoading] = useState(false);
+
   useEffect (() => {
     if (auth && auth.token) {
       if (auth.role === 'ROLE_ADMIN') {
@@ -53,6 +56,9 @@ const Login = () => {
 
     if (!validateEmailOrMobile(username)) {
       newErrors.username = 'Enter a valid email or 10-digit mobile number.';
+      isValid = false;
+    } else if (validateEmail(username) && !validateEmailDomain(username)) {
+      newErrors.username = `Enter a valid email domain!`
       isValid = false;
     }
 
@@ -78,34 +84,42 @@ const Login = () => {
     
     try {
       const encodedPassword = btoa(password);
+      setLoading(true)
       const data = await login({username, password: encodedPassword});
       dispatch(loginUser(data));
       window.localStorage.setItem('authtoken', data.token);
       toast.success('Login successfull');
     } catch (error) {
-      const msg = error.response.data.message || 'Login failed!';
+      const msg = error?.response?.data?.message || 'Login failed!';
       toast.error(msg);
+    } finally {
+      setLoading(false);
     }
   
   }
 
   return (
-    <div className='login-page'>
-      <form onSubmit={handleSubmit} className="login-form">
-        <img src={images.logo} alt='logo'  />
-        { 
-        !auth.loading 
-          ? <h2 className=''>Login to your account</h2>
-          : <h2 className='' style={{color: 'red'}}>Loading ...</h2>
-        }
-        <br />
-        <Input onChange={(e) => {setUsername(e.target.value); setErrors(initialErrors)}} type='text' name='username' value={username} label={'Username:'} placeholder={'Enter your username'} error={errors.username} />
-        <Input onChange={(e) => {setPassword(e.target.value); setErrors(initialErrors)}} type={passwordVisible ? 'text' : 'password'} name='password' value={password} label={'Password:'} placeholder={'Enter your password'} error={errors.password}  />
-        <div className="login-btn">
-          <Button type={'submit'} varient={'primary'}  >Login</Button>
-        </div>
-      </form>
-    </div>
+    <>
+    {loading && <Loader />}
+
+      <div className='login-page'>
+        <form onSubmit={handleSubmit} className="login-form">
+          <img src={images.logo} alt='logo'  />
+          { 
+          !auth.loading 
+            ? <h2 className=''>Login to your account</h2>
+            : <h2 className='' style={{color: 'red'}}>Loading ...</h2>
+          }
+          <br />
+          <Input onChange={(e) => {setUsername(e.target.value); setErrors(initialErrors)}} type='text' name='username' value={username} label={'Username:'} placeholder={'Enter your username'} error={errors.username} />
+          <Input onChange={(e) => {setPassword(e.target.value); setErrors(initialErrors)}} type={passwordVisible ? 'text' : 'password'} name='password' value={password} label={'Password:'} placeholder={'Enter your password'} error={errors.password}  />
+          <div className="login-btn">
+            <Button type={'submit'} varient={'primary'}  >Login</Button>
+          </div>
+        </form>
+      </div>
+      
+    </>
   )
 }
 

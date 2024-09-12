@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+
+// CSS
 import './BookHistory.css'
+
+// Components
 import DashboardHOC from '../../../components/hoc/dashboardHOC/DashboardHOC'
-import { useParams } from 'react-router-dom'
-import toast from '../../../components/toast/toast'
-import { getBookById, getBookHistory } from '../../../api/services/book'
 import Table from '../../../components/table/Table'
-import { useSelector } from 'react-redux'
+import toast from '../../../components/toast/toast'
+
+// Functions
+import { getBookById, getBookHistory } from '../../../api/services/book'
+import { BackwardIcon } from '../../../components/icons/Icons'
 
 const tableCols = [
     "Id",
@@ -17,17 +23,17 @@ const tableCols = [
     "Type"
 ]
 
-const BookHistory = () => {
+const BookHistory = ({setLoading, rowCount}) => {
 
     const {bookId} = useParams();
+    const navigate = useNavigate();
 
-    const auth = useSelector(state => state.auth);
     const [book, setBook] = useState();
     const [bookHistory, setBookHistory] = useState([]);
 
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(0);
-    const [size, setSize] = useState(5);
+    const [size, setSize] = useState(rowCount || 5);
     const [sortBy, setSortBy] = useState('id');
     const [sortDir, setSortDir] = useState('asc');
     const [search, setSearch] = useState('');
@@ -36,28 +42,31 @@ const BookHistory = () => {
         loadBookHistory();
     }, [page, size, sortBy, sortDir])
 
-    // useEffect(() => {
-    //     const timeout = setTimeout(() => {
-    //       loadBooks();
-    //     }, 1000)
-    
-    //     return () => clearTimeout(timeout);
-    //   }, [search])
+    useEffect(() => {
+        setSize(rowCount);
+      }, [rowCount])
+
+    const goBack = () => {
+        navigate(-1);
+    }
 
     const loadBookHistory = async () => {
         try {
+            setLoading(true)
             await loadBook();
             const data = await getBookHistory(bookId, {page, size, sortBy, sortDir, search});
             setBookHistory(data.content);
             setTotalPages(data.totalPages);
         } catch (error) {
             toast.error(`Failed to load book history`);
+        } finally {
+            setLoading(false);
         }
     }
 
     const loadBook = async () => {
         try {
-            const data = await getBookById(bookId, auth.token);
+            const data = await getBookById(bookId);
             setBook(data);
         } catch (error) {
             toast.error(`Failed to load book`);
@@ -86,7 +95,10 @@ const BookHistory = () => {
 
   return (
         <div>
-            <h2 className='history-title'>{book?.title}'s history</h2>
+            <div className="history-header-admin">
+                <h2 className='history-title'>{book?.title}'s history</h2>
+                <div onClick={goBack} className="go-back-link"><BackwardIcon /> Go back</div>
+            </div>
             <Table colums={tableCols} data={bookHistory} currentPage={page} totalPages={totalPages} onPageChange={setPage} sortBy={'Id'} onSort={handleSort} type={'userHistory'} />
         </div>
   )

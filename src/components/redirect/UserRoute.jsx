@@ -5,8 +5,21 @@ import LoadingToRedirect from './LoadingToRedirect';
 const UserRoute = ({children, ...rest}) => {
 
   const auth = useSelector((state) => state.auth);
+  const [verified, setVerified] = useState(false);
+  
+  useEffect(() => {
+    if (auth && auth.token) {
+      try {
+        if (auth.role === 'ROLE_USER') {
+          setVerified(true);
+        }
+      } catch (error) {
+        setVerified(false);
+      }
+    }
+  }, [auth])
  
-  return auth && auth.token 
+  return verified
     ? children 
     : <div className="">
         <LoadingToRedirect />

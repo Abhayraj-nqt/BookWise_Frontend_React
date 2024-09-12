@@ -1,6 +1,10 @@
 import React from 'react'
+
+// Components
 import Popup from './Popup'
 import Button from '../button/Button'
+
+// CSS
 import './Popup.css'
 
 const AlertPopup = ({title ='Warning!', isOpen, onClose, onConfirm, btnText = 'Confirm',  message = 'Are you sure you want to delete this item?'}) => {

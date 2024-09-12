@@ -7,7 +7,6 @@ import "./Navbar.css";
 
 // Components
 import { AccountIcon, ArrowDownIcon } from "../icons/Icons";
-import Button from "../button/Button";
 
 // Functions
 import { logout } from "../../api/services/auth";
@@ -34,7 +33,6 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [firstName, setFirstName] = useState('');
-  // const [sideNavOpen, setSideNavOpen] = useState(false);
 
   const showDropdown = () => setIsDropdownOpen(true);
   const hideDropdown = () => setIsDropdownOpen(false);
@@ -63,7 +61,6 @@ const Navbar = () => {
           <img src={images.logo} alt="Quickcart-logo" />
         </Link>
 
-        {/* <div className="nav-links-container" style={!isLoggedIn ? {justifyContent: 'center', gap: '2rem'}: {}} > */}
         <div className="nav-links-container" style={!isLoggedIn ? { width: 'fit-content' } : {}} >
           {isLoggedIn && <div onClick={toggleDropdown} to={'/user/account'} className={`${isLoggedIn ? 'flex' : 'hidden'} account nav-links-item`}>
             <div className="nav-link-icon">
@@ -78,15 +75,9 @@ const Navbar = () => {
             </div>
             {isDropdownOpen && (
             <div onMouseLeave={hideDropdown} className="dropdown-content">
-              {/* <Link to={'/account'}>Account</Link> */}
-              {auth && auth.role === 'ROLE_ADMIN' ? <Link to={'/admin/dashboard'}>Dashboard</Link> : <Link to={'/user/history'}>History</Link>}
               <div className="drop-logout" onClick={handleLogout} >Logout</div>
             </div>)}
           </div>}
-
-          {/* {!isLoggedIn && <Link to={'/login'} className={`${!isLoggedIn ? 'flex' : 'hidden'} login account nav-links-item`}>
-            <Button varient={'primary'}>Login</Button>
-          </Link>} */}
         </div>
       </nav>
     </>

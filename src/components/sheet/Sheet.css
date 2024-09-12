@@ -9,7 +9,6 @@
   align-items: center;
   transform: translateX(100%);
   z-index: 1000;
-  /* transition: transform 0.3s; */
 }
 
 .sheet-container.open {

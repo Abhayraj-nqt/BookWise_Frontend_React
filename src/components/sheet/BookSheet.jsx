@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from 'react'
-import Sheet from './Sheet'
-import Searchbar from '../searchbar/Searchbar'
-import Card from '../card/Card'
-import { getAllUsers, getUserByMobile } from '../../api/services/user'
-import toast from '../toast/toast'
-import { useSelector } from 'react-redux'
-import Button from '../button/Button'
+import { useNavigate } from 'react-router-dom'
 
-import './BookSheet.css'
+// Components
+import Button from '../button/Button'
+import Sheet from './Sheet'
 import Select from '../form/select/Select'
-import Input from '../form/input/Input'
-import { createIssuance } from '../../api/services/Issuance'
 import TimePicker from '../form/time/TimePicker'
 import DatePicker  from '../form/date/DatePicker'
-import { validateNotEmpty } from '../../libs/utils'
 import SelectSearch from '../form/selectSearch/SelectSearch'
+import toast from '../toast/toast'
+
+// CSS
+import './BookSheet.css'
+
+// Functions
+import { getAllUsers } from '../../api/services/user'
+import { createIssuance } from '../../api/services/Issuance'
+import { validateNotEmpty } from '../../libs/utils'
 
 const initialErrors = {
     returnTime: ''
 }
 
-const BookSheet = ({ isSheetOpen, onClose, bookData }) => {
+const BookSheet = ({ isSheetOpen, onClose, bookData, setLoading, renderList }) => {
 
-    const auth = useSelector(state => state.auth);
+    const navigate = useNavigate();
 
     const [userData, setUserData] = useState({
         id: '',
@@ -35,8 +37,6 @@ const BookSheet = ({ isSheetOpen, onClose, bookData }) => {
         new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
     );
 
-    const [query, setQuery] = useState('');
-    const [clearInput, setClearInput] = useState(false);
     const [issuanceType, setIssuanceType] = useState('In house');
     const [returnTime, setReturnTme] = useState('');
     const [errors, setErrors] = useState(initialErrors);
@@ -52,34 +52,20 @@ const BookSheet = ({ isSheetOpen, onClose, bookData }) => {
                 mobileNumber: '',
                 email: '',
             })
-            setQuery('');
-            setClearInput(true);
             setClearSheetInput(true);
             setErrors(initialErrors);
         } else {
-            setClearInput(false);
             setClearSheetInput(false);
         }
     }, [isSheetOpen])
 
     const handleSearch = async (searchQuery) => {
-        // setQuery(searchQuery);
         setSearch(searchQuery);
         await loadUsers()
     }
 
     const handleSelect = (selectedUser) => {
         setUserData(selectedUser);
-    }
-
-    const handleClickSearch = async () => {
-        try {
-            const data = await getUserByMobile(query);
-            setUserData(data);
-        } catch (error) {
-            console.log(error);
-            toast.error(`Failed to find user`);
-        }
     }
 
     const handleBookIssue = async () => {
@@ -99,7 +85,6 @@ const BookSheet = ({ isSheetOpen, onClose, bookData }) => {
             formatedDateTime = `${returnTime}T${currentTime}`;
         }
 
-        console.log({ "user mobile": userData?.id, "book id": bookData?.id, issuanceType, formatedDateTime });
         const issenceObj = {
             user: userData?.id,
             book: bookData?.id,
@@ -108,12 +93,16 @@ const BookSheet = ({ isSheetOpen, onClose, bookData }) => {
         }
 
         try {
-            const {data} = await createIssuance(issenceObj, auth.token);
-            console.log('ISSUANCE', data);
-            toast.success('Issuance created successfully');
+            setLoading(true);
+            const data = await createIssuance(issenceObj);
+            // renderList();
+            toast.success(data?.message || 'Issuance created successfully');
+            navigate('/admin/issuance')
         } catch (error) {
-            console.log(error);
-            toast.error('Failed to create issuance');
+            const msg = error?.response?.data?.message || 'Failed to create issuance';
+            toast.error(msg);
+        } finally {
+            setLoading(false);
         }
 
         onClose();
@@ -121,12 +110,17 @@ const BookSheet = ({ isSheetOpen, onClose, bookData }) => {
 
     const validate = () => {
         let isValid = true;
+
+        const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
         const newErrors = {
             returnTime: ''
         }
 
         if (!validateNotEmpty(returnTime)) {
             newErrors.returnTime = `Return time is required!`
+            isValid = false;
+        } else if (returnTime < time) {
+            newErrors.returnTime = `Return time can't be before than current time`
             isValid = false;
         }
 
@@ -146,7 +140,7 @@ const BookSheet = ({ isSheetOpen, onClose, bookData }) => {
                 setUserList(data?.content);
             }
         } catch (error) {
-            console.log(error);
+            toast.error('Error fetching users')
         }
     }
 
@@ -155,16 +149,13 @@ const BookSheet = ({ isSheetOpen, onClose, bookData }) => {
             <div className="book-sheet">
                 <h2>Issue book to user</h2>
                 <div className="sheet-serch-bar">
-                    {/* <Searchbar placeholder={'Search user by mobile no.'} onSearch={handleSearch} varient={'secondary'} clearInput={clearInput} icon={false} /> */}
                     <SelectSearch  options={userList} setOptions={setUserList} onSearch={handleSearch} placeholder='Enter mobile no.' onSelect={handleSelect} clearInput={clearSheetInput} type={'user'} />
-                    {/* <Button onClick={handleClickSearch} varient={'primary'}>Search</Button> */}
                 </div>
                 <div className="">
                     <Select label={'Type'} name={'issuanceType'} value={issuanceType} onChange={(e) => setIssuanceType(e.target.value)} placeholder={'Select issuance type'} >
                         <option value="In house">In house</option>
                         <option value="Take away">Take away</option>
                     </Select>
-                    {/* <Input label={'Return date'} onChange={(e) => setReturnDate(e.target.value)} name='returnDate' value={returnDate} type='datetime-local' placeholder={'Select date'}  /> */}
                     {issuanceType === 'In house' && <TimePicker label={'Return time'} name='returnTime' value={returnTime} onChange={(e) => {setReturnTme(e.target.value); setErrors(initialErrors)}} placeholder={'Select time'} className={''} min={currentTime} error={errors.returnTime} />}
                     {issuanceType === 'Take away' && <DatePicker label={'Return date'} name='returnTime' value={returnTime} onChange={(e) => {setReturnTme(e.target.value); setErrors(initialErrors)}} placeholder={'Select date'} className={''} min={new Date().toISOString().split("T")[0]} error={errors.returnTime} />}
                 </div>

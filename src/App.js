@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
 // CSS ------------------------------------------------------------------------
@@ -10,6 +10,7 @@ import Navbar from './components/navbar/Navbar'
 import AdminRoute from './components/redirect/AdminRoute'
 import UserRoute from './components/redirect/UserRoute'
 import ToastContainer from './components/toast/ToastContainer'
+import Loader from './components/loader/Loader'
 
 // Pages ----------------------------------------------------------------------
 import Dashboard from './pages/admin/dashboard/Dashboard'
@@ -19,25 +20,34 @@ import User from './pages/admin/user/User'
 import Issuance from './pages/admin/issuance/Issuance'
 import BookHistory from './pages/admin/bookHistory/BookHistory'
 import AdminUserHistory from './pages/admin/userHistory/AdminUserHistory'
-
 import History from './pages/user/history/History'
-
 import Login from './pages/login/Login'
 
-// Functions
+// Functions ------------------------------------------------------------------ 
 import { getCurrentUser } from './api/services/auth'
 import { loginUser } from './redux/auth/authActions'
-import Account from './pages/user/account/Account'
+import Notfound from './pages/notfound/Notfound'
 
 
 const App = () => {
 
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [location]);
 
   useEffect(() => {
     const token = window.localStorage.getItem('authtoken');
-    console.log('TOKEN APP ->', token);
     
     if (Boolean(token)) {
       loadUser();
@@ -51,9 +61,6 @@ const App = () => {
       const data = await getCurrentUser();
       dispatch(loginUser(data));
       window.localStorage.setItem('authtoken', data.token);
-
-      console.log("APP ->", data);
-
     } catch (error) {
       navigate('/login');
     }
@@ -61,10 +68,10 @@ const App = () => {
 
   return (
     <>
+      {loading && <Loader />}
       <Navbar />
       <ToastContainer />
       <Routes>
-
         {/* Public routes */}
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path='/login' element={<Login />} />
@@ -80,7 +87,8 @@ const App = () => {
 
         {/* Protected routes for user */}
         <Route path='/user/history' element={<UserRoute> <History /> </UserRoute>} />
-        {/* <Route path='/account' element={<UserRoute> <Account /> </UserRoute>} /> */}
+
+        <Route path='*' element={<Notfound />} />
 
       </Routes>
     </>
