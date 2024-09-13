@@ -19,7 +19,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom --transformIgnorePatterns 'node_modules/(?!axios)/'",
-    "coverage":"react-scripts test --env=jsdom --transformIgnorePatterns 'node_modules/(?!axios)/' --watchAll=false --coverage",
+    "coverage":"react-scripts test --env=jsdom --transformIgnorePatterns 'node_modules/(?!axios)/' --watchAll=false --coverage --collectCoverageFrom='src/pages/admin/category/Category.jsx' --collectCoverageFrom='src/api/services/category.js' --collectCoverageFrom='src/libs/constants.js' --collectCoverageFrom='src/components/searchbar/Searchbar.jsx' --collectCoverageFrom='src/components/button/Button.jsx' --collectCoverageFrom='src/components/form/input/Input.jsx' --collectCoverageFrom='src/components/loader/Loader.jsx' --collectCoverageFrom='src/components/popup/CategoryPopup.jsx' --collectCoverageFrom='src/components/popup/AlertPopup.jsx' --collectCoverageFrom='src/components/pagination/Pagination.jsx'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
