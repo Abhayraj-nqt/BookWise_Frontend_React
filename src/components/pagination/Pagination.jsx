@@ -23,13 +23,13 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     <>
       <div className="pagination">
        
-        <div onClick={handlePrevious} className="pagination-icon-left icon">
+        <div data-testid="backward-icon" onClick={handlePrevious} className="pagination-icon-left icon">
           <BackwardIcon size={25} />
         </div>
         
         <span>{`Page ${currentPage+1} of ${totalPages}`}</span>
         
-        <div onClick={handleNext} className="pagination-icon-right icon">
+        <div data-testid="forward-icon" onClick={handleNext} className="pagination-icon-right icon">
           <ForwardIcon size={25} />
         </div>
       </div> 
