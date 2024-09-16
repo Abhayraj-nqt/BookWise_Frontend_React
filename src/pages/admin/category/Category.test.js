@@ -80,6 +80,49 @@ describe('Category component', () => {
 
     });
 
+    test('fetches and displays categories no pagination', async () => {
+
+        getAllCategories.mockResolvedValue(
+            [
+                { id: 1, name: 'Fiction' },
+                { id: 2, name: 'Non-Fiction' },
+            ]
+        );
+
+        await act(async () => {
+            render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+        })
+
+        await waitFor(() => expect(getAllCategories).toHaveBeenCalledTimes(1));
+
+        const fictionCategory = await screen.findByText('Fiction');
+        const nonFictionCategory = await screen.findByText('Non-Fiction');
+
+        expect(fictionCategory).toBeInTheDocument();
+        expect(nonFictionCategory).toBeInTheDocument();
+
+    });
+
+    test('error fetching categories', async () => {
+
+        getAllCategories.mockRejectedValue(
+            new Error("Error fetching categories")
+        );
+
+        await act(async () => {
+            render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+        })
+
+        await waitFor(() => expect(getAllCategories).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Error fetching categories'));
+
+        const fictionCategory = screen.queryByText('Fiction');
+        const nonFictionCategory = screen.queryByText('Non-Fiction');
+
+        expect(fictionCategory).not.toBeInTheDocument();
+        expect(nonFictionCategory).not.toBeInTheDocument();
+    });
+
     test('creates a new category', async () => {
         createCategory.mockResolvedValue({ message: 'Category created successfully' });
         getAllCategories.mockResolvedValue({
@@ -114,6 +157,31 @@ describe('Category component', () => {
         });
 
         await waitFor(() => expect(screen.getByText('Politics')).toBeInTheDocument());
+    });
+
+    test('error creating a new category', async () => {
+        createCategory.mockRejectedValue(new Error('Failed to add category'));
+        getAllCategories.mockResolvedValue({
+            content: [
+                { id: 1, name: 'Fiction' },
+                { id: 2, name: 'Non-Fiction' },
+                { id: 3, name: 'History' },
+            ],
+            totalPages: 1,
+        });
+
+        await act(async () => {
+            render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+        })
+
+        fireEvent.click(screen.getByText('Add'));
+        await waitFor(() => screen.getByRole('button', { name: 'Save' }));
+        fireEvent.change(screen.getByPlaceholderText('Enter category name'), { target: { value: 'Politics' } });
+        fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+        await waitFor(() => expect(createCategory).toHaveBeenCalledWith({ name: 'Politics' }));
+        await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Failed to add category'));
+
     });
 
     test('updates an existing category', async () => {
@@ -153,6 +221,32 @@ describe('Category component', () => {
         await waitFor(() => expect(screen.getByText('Fiction Updated')).toBeInTheDocument());
     });
 
+    test('error updating an existing category', async () => {
+        updateCategory.mockRejectedValue(new Error('Failed to update'));
+        getAllCategories.mockResolvedValue({
+            content: [
+                { id: 1, name: 'Fiction' },
+                { id: 2, name: 'Non-Fiction' },
+                { id: 3, name: 'History' },
+                { id: 4, name: 'Politics' },
+            ],
+            totalPages: 1,
+        });
+
+        await act(async () => {
+            render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+        })
+
+        await waitFor(() => fireEvent.click(screen.getByTestId('edit-icon-1')));
+        await waitFor(() => screen.getByRole('button', { name: 'Update' }));
+        fireEvent.change(screen.getByPlaceholderText('Enter category name'), { target: { value: 'Fiction Updated' } });
+        fireEvent.click(screen.getByText('Update'));
+
+        await waitFor(() => expect(updateCategory).toHaveBeenCalledWith(1, { name: 'Fiction Updated' }));
+        await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Failed to update'));
+
+    });
+
     test('deletes a category', async () => {
         removeCategory.mockResolvedValue({ message: 'Successfully deleted' });
         getAllCategories.mockResolvedValue({
@@ -185,6 +279,29 @@ describe('Category component', () => {
         });
 
         await waitFor(() => expect(screen.queryByText('Fiction')).not.toBeInTheDocument());
+    });
+
+    test('error deleting a category', async () => {
+        removeCategory.mockRejectedValue(new Error('Failed to delete!'));
+        getAllCategories.mockResolvedValue({
+            content: [
+                { id: 1, name: 'Fiction' },
+                { id: 2, name: 'Non-Fiction' },
+                { id: 3, name: 'History' },
+                { id: 4, name: 'Politics' },
+            ],
+            totalPages: 1,
+        });
+
+        await act(async () => {
+            render(<WrappedCategory setLoading={jest.fn()} rowCount={5} />);
+        })
+
+        await waitFor(() => fireEvent.click(screen.getByTestId(`delete-icon-1`)));
+        await waitFor(() => fireEvent.click(screen.getByRole('button', { name: 'Confirm' })));
+
+        await waitFor(() => expect(removeCategory).toHaveBeenCalledWith(1));
+        await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Failed to delete!'));
     });
 
     test('fetches categories on load', async () => {
