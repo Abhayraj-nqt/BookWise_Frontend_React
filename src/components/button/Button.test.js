@@ -29,6 +29,16 @@ describe('Button component', () => {
         expect(button).toHaveClass('custom-class');
     });
 
+    test('renders button with no varient', () => {
+        render(<Button varient="" className="custom-class">No Varient Button</Button>);
+
+        const button = screen.getByRole('button', { name: /no varient button/i });
+        expect(button).toBeInTheDocument();
+        expect(button).not.toHaveClass('button-primary');
+        expect(button).not.toHaveClass('button-secondary');
+        expect(button).toHaveClass('custom-class');
+    })
+
     test('fires onClick event when clicked', () => {
         render(<Button onClick={mockOnClick}>Click Me</Button>);
     
